@@ -32,7 +32,7 @@ CLASS: {
 package x;
 
 sub new {
-	my ($proto, %args) = @_;
+	my $proto = shift;
 
 	my $class = ref($proto) || $proto;
 

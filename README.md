@@ -22,11 +22,11 @@ Creates a Class::Simple::Cached object.
 
 It takes one manadatory parameter: cache,
 which is an object which understands get() and set() calls,
-such as an [CHI](https://metacpan.org/pod/CHI) object;
+such as an [CHI](https://metacpan.org/pod/CHI) object.
 
 It takes one optional argument: super,
 which is an object which is taken to be the object to be cached.
-If not given, an object of the class Class::Simple is instantiated
+If not given, an object of the class [Class::Simple](https://metacpan.org/pod/Class::Simple) is instantiated
 and that is used.
 
 # AUTHOR
