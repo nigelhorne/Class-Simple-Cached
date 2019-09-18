@@ -21,6 +21,7 @@ WriteMakefile(
 	},
 	PREREQ_PM => {
 		'Carp' => 0,
+		'Class::Simple' => 0,
 	},
 	dist		=> { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
 	clean		=> { FILES => 'Class-Simple-Cached-*' },

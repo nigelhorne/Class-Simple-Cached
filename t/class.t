@@ -14,7 +14,7 @@ CLASS: {
 	my $cache = CHI->new(driver => 'RawMemory', global => 1);
 	$cache->on_set_error('die');
 	$cache->on_get_error('die');
-	my $l = new_ok('Class::Simple::Cached' => [ cache => $cache, super => x->new() ]);
+	my $l = new_ok('Class::Simple::Cached' => [ cache => $cache, object => x->new() ]);
 
 	ok($l->calls() == 0);
 	ok($l->barney('betty') eq 'betty');

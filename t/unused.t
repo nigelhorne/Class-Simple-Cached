@@ -2,19 +2,38 @@
 
 use strict;
 use warnings;
+use CHI;
 use Test::Most;
 
-unless($ENV{AUTHOR_TESTING}) {
-	plan(skip_all => "Author tests not required for installation");
+my $can_test = 1;
+
+if($ENV{AUTHOR_TESTING}) {
+	eval {
+		use Test::Requires {
+			'warnings::unused' => 0.04
+		};
+	};
+	if($@) {
+		plan(skip_all => 'Test::Requires needed for installation');
+		$can_test = 0;
+	}
 }
 
-# eval 'use warnings::unused -global';
-eval 'use warnings::unused';
+if($can_test) {
+	BEGIN {
+		if($ENV{AUTHOR_TESTING}) {
+			use_ok('Class::Simple::Cached');
+			# eval 'use warnings::unused -global';
+			eval 'use warnings::unused';
+		}
+	}
 
-if($@ || ($warnings::unused::VERSION < 0.04)) {
-	plan(skip_all => 'warnings::unused >= 0.04 needed for testing');
-} else {
-	use_ok('CGI::Info');
-	new_ok('CGI::Info');
-	plan(tests => 2);
+	if(not $ENV{AUTHOR_TESTING}) {
+		plan(skip_all => 'Author tests not required for installation');
+	} else {
+		new_ok('Class::Simple::Cached' =>
+			[ cache => CHI->new(driver => 'RawMemory', global => 1) ]
+		);
+		plan tests => 2;
+	}
 }

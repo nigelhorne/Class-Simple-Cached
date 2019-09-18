@@ -37,7 +37,7 @@ It takes one manadatory parameter: cache,
 which is an object which understands get() and set() calls,
 such as an L<CHI> object;
 
-It takes one optional argument: super,
+It takes one optional argument: object,
 which is an object which is taken to be the object to be cached.
 If not given, an object of the class Class::Simple is instantiated
 and that is used.
@@ -54,16 +54,16 @@ sub new {
 	if(ref($_[0]) eq 'HASH') {
 		%args = %{$_[0]};
 	} elsif(ref($_[0])) {
-		Carp::croak('Usage: ', __PACKAGE__, '->new(cache => $cache [, super => $super ], %args)');
+		Carp::croak('Usage: ', __PACKAGE__, '->new(cache => $cache [, object => $object ], %args)');
 	} elsif(@_ % 2 == 0) {
 		%args = @_;
 	}
 
-	if(!defined($args{'super'})) {
-		$args{'super'} = Class::Simple->new();
+	if(!defined($args{'object'})) {
+		$args{'object'} = Class::Simple->new();
 	}
 
-	Carp::croak('Usage: ', __PACKAGE__, '->new(cache => $cache [, super => $super ], %args)') unless($args{'cache'});
+	Carp::croak('Usage: ', __PACKAGE__, '->new(cache => $cache [, object => $object ], %args)') unless($args{'cache'});
 	return bless \%args, $class;
 }
 
@@ -71,7 +71,7 @@ sub _caller_class
 {
 	my $self = shift;
 
-	if($self->{'super'} && ($self->{'super'} eq 'Class::Simple')) {
+	if(ref($self->{'object'}) eq 'Class::Simple') {
 		# return $self->SUPER::_caller_class(@_);
 		return $self->Class::Simple::_caller_class(@_);
 	}
@@ -85,9 +85,9 @@ sub AUTOLOAD {
 
 	return if($param eq 'DESTROY');
 	my $self = shift;
-	# my $func = $self->{'super'} . "::$param";
+	# my $func = $self->{'object'} . "::$param";
 	my $func = $param;
-	my $super = $self->{'super'};
+	my $object = $self->{'object'};
 
 	if($param !~ /^[gs]et_/) {
 		my $cache = $self->{'cache'};
@@ -100,10 +100,10 @@ sub AUTOLOAD {
 
 		# $param = "SUPER::$param";
 		# return $cache->set($param, $self->$param(@_), 'never');
-		return $cache->set($param, $super->$func(@_), 'never');
+		return $cache->set($param, $object->$func(@_), 'never');
 	}
 	# $param = "SUPER::$param";
-	$super->$func(@_);
+	$object->$func(@_);
 }
 
 =head1 AUTHOR
@@ -153,10 +153,15 @@ L<http://search.cpan.org/dist/Class-Simple-Cached/>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2019 Nigel Horne.
+Author Nigel Horne: C<njh@bandsman.co.uk>
+Copyright (C) 2019, Nigel Horne
 
-This program is released under the following licence: GPL2
-
+Usage is subject to licence terms.
+The licence terms of this software are as follows:
+Personal single user, single computer use: GPL2
+All other users (including Commercial, Charity, Educational, Government)
+must apply in writing for a licence for use from Nigel Horne at the
+above e-mail.
 =cut
 
 1;
