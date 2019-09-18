@@ -14,7 +14,7 @@ if($ENV{AUTHOR_TESTING}) {
 		};
 	};
 	if($@) {
-		plan(skip_all => 'Test::Requires needed for installation');
+		plan(skip_all => 'Test::Requires needed for test');
 		$can_test = 0;
 	}
 }
