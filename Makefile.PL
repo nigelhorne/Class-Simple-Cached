@@ -15,6 +15,7 @@ WriteMakefile(
 	TEST_REQUIRES => {
 		'CHI' => 0,
 		'Class::Simple' => 0,
+		'Test::Carp' => 0,
 		'Test::Most' => 0,
 		'Test::NoWarnings' => 0,
 		'Test::Requires' => 0,

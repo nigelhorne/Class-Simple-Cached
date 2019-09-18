@@ -54,7 +54,8 @@ sub new {
 	if(ref($_[0]) eq 'HASH') {
 		%args = %{$_[0]};
 	} elsif(ref($_[0])) {
-		Carp::croak('Usage: ', __PACKAGE__, '->new(cache => $cache [, object => $object ], %args)');
+		Carp::carp('Usage: ', __PACKAGE__, '->new(cache => $cache [, object => $object ], %args)');
+		return;
 	} elsif(@_ % 2 == 0) {
 		%args = @_;
 	}
@@ -63,8 +64,10 @@ sub new {
 		$args{'object'} = Class::Simple->new();
 	}
 
-	Carp::croak('Usage: ', __PACKAGE__, '->new(cache => $cache [, object => $object ], %args)') unless($args{'cache'});
-	return bless \%args, $class;
+	if($args{'cache'}) {
+		return bless \%args, $class;
+	}
+	Carp::carp('Usage: ', __PACKAGE__, '->new(cache => $cache [, object => $object ], %args)');
 }
 
 sub _caller_class
