@@ -61,7 +61,7 @@ sub new {
 	}
 
 	if(!defined($args{'object'})) {
-		$args{'object'} = Class::Simple->new();
+		$args{'object'} = Class::Simple->new(%args);
 	}
 
 	if($args{'cache'}) {
