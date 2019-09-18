@@ -21,12 +21,26 @@ our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
-A sub-class of L<Simple::Cached> which caches calls to read
+A sub-class of L<Class::Simple> which caches calls to read
 the status of an object that are otherwise expensive.
+
+It is up to the caller to maintain the cache if the object comes out of sync with the cache,
+for example by changing its state.
 
 =head1 SUBROUTINES/METHODS
 
 =head2 new
+
+Creates a Class::Simple::Cached object.
+
+It takes one manadatory parameter: cache,
+which is an object which understands get() and set() calls,
+such as an L<CHI> object;
+
+It takes one optional argument: super,
+which is an object which is taken to be the object to be cached.
+If not given, an object of the class Class::Simple is instantiated
+and that is used.
 
 =cut
 
@@ -40,12 +54,16 @@ sub new {
 	if(ref($_[0]) eq 'HASH') {
 		%args = %{$_[0]};
 	} elsif(ref($_[0])) {
-		Carp::croak('Usage: ', __PACKAGE__, '->new(cache => $cache, %args)');
+		Carp::croak('Usage: ', __PACKAGE__, '->new(cache => $cache [, super => $super ], %args)');
 	} elsif(@_ % 2 == 0) {
 		%args = @_;
 	}
 
-	Carp::croak('Usage: ', __PACKAGE__, '->new(cache => $cache, %args)') unless($args{'cache'});
+	if(!defined($args{'super'})) {
+		$args{'super'} = Class::Simple->new();
+	}
+
+	Carp::croak('Usage: ', __PACKAGE__, '->new(cache => $cache [, super => $super ], %args)') unless($args{'cache'});
 	return bless \%args, $class;
 }
 
@@ -53,8 +71,10 @@ sub _caller_class
 {
 	my $self = shift;
 
-	# return $self->SUPER::_caller_class(@_);
-	return $self->Class::Simple::_caller_class(@_);
+	if($self->{'super'} && ($self->{'super'} eq 'Class::Simple')) {
+		# return $self->SUPER::_caller_class(@_);
+		return $self->Class::Simple::_caller_class(@_);
+	}
 }
 
 sub AUTOLOAD {
@@ -65,6 +85,9 @@ sub AUTOLOAD {
 
 	return if($param eq 'DESTROY');
 	my $self = shift;
+	# my $func = $self->{'super'} . "::$param";
+	my $func = $param;
+	my $super = $self->{'super'};
 
 	if($param !~ /^[gs]et_/) {
 		my $cache = $self->{'cache'};
@@ -76,13 +99,11 @@ sub AUTOLOAD {
 		}
 
 		# $param = "SUPER::$param";
-		my $func = "Class::Simple::$param";
 		# return $cache->set($param, $self->$param(@_), 'never');
-		return $cache->set($param, $self->$func(@_), 'never');
+		return $cache->set($param, $super->$func(@_), 'never');
 	}
 	# $param = "SUPER::$param";
-	$param = "Class::Simple::$param";
-	$self->$param(@_);
+	$super->$func(@_);
 }
 
 =head1 AUTHOR
@@ -104,7 +125,7 @@ things to happen.
 
 =head1 SEE ALSO
 
-L<Class::Simple>
+L<Class::Simple>, L<CHI>
 
 =head1 SUPPORT
 
