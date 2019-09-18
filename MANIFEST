@@ -4,4 +4,7 @@ Makefile.PL
 MANIFEST			This list of files
 README.md
 t/00-load.t
+t/pod-cm.t
+t/pod.t
 t/test.t
+t/unused.t
