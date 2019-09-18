@@ -24,7 +24,7 @@ It takes one manadatory parameter: cache,
 which is an object which understands get() and set() calls,
 such as an [CHI](https://metacpan.org/pod/CHI) object.
 
-It takes one optional argument: super,
+It takes one optional argument: object,
 which is an object which is taken to be the object to be cached.
 If not given, an object of the class [Class::Simple](https://metacpan.org/pod/Class::Simple) is instantiated
 and that is used.
@@ -72,6 +72,12 @@ You can also look for information at:
 
 # LICENSE AND COPYRIGHT
 
-Copyright 2019 Nigel Horne.
+Author Nigel Horne: `njh@bandsman.co.uk`
+Copyright (C) 2019, Nigel Horne
 
-This program is released under the following licence: GPL2
+Usage is subject to licence terms.
+The licence terms of this software are as follows:
+Personal single user, single computer use: GPL2
+All other users (including Commercial, Charity, Educational, Government)
+must apply in writing for a licence for use from Nigel Horne at the
+above e-mail.
