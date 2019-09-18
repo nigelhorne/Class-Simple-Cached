@@ -33,7 +33,7 @@ for example by changing its state.
 
 Creates a Class::Simple::Cached object.
 
-It takes one manadatory parameter: cache,
+It takes one mandatory parameter: cache,
 which is an object which understands get() and set() calls,
 such as an L<CHI> object.
 
