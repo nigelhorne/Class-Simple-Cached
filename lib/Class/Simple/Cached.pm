@@ -122,6 +122,7 @@ sub AUTOLOAD {
 	# return $cache->set($param, $self->$param(@_), 'never');
 	if($_[1]) {
 		# Storing an array
+		# We store a ref to the array, and dereference on retrieval
 		my $val = $object->$func(\@_);
 		$cache->set($param, $val, 'never');
 		return @{$val};

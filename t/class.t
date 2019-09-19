@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::Most tests => 12;
+use Test::Most tests => 17;
 use Test::NoWarnings;
 use CHI;
 
@@ -27,6 +27,15 @@ CLASS: {
 	ok(scalar(@abc) == 3);
 	my @a = $l->a();
 	ok(scalar(@a) == 1);
+	ok($a[0] eq 'a');
+
+	# White box test the cache
+	ok($cache->get('barney') eq 'betty');
+	my $a = $cache->get('a');
+	ok(ref($a) eq 'ARRAY');
+	my $abc = $cache->get('abc');
+	ok(ref($abc) eq 'ARRAY');
+	ok(scalar(@{$abc}) == 3);
 
 	# foreach my $key($cache->get_keys()) {
 		# diag($key);
