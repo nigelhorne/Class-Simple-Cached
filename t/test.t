@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::Most tests => 6;
+use Test::Most tests => 9;
 use Test::NoWarnings;
 use CHI;
 
@@ -19,6 +19,11 @@ TEST: {
 	ok($l->fred('wilma') eq 'wilma');
 	ok($l->fred() eq 'wilma');
 	ok($l->fred() eq 'wilma');
+
+	my @rc = $l->adventure('plugh', 'xyzzy');
+	ok(scalar(@rc) == 2);
+	ok($rc[0] eq 'plugh');
+	ok($rc[1] eq 'xyzzy');
 
 	# foreach my $key($cache->get_keys()) {
 		# diag($key);

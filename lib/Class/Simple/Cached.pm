@@ -33,7 +33,7 @@ for example by changing its state.
 
 Creates a Class::Simple::Cached object.
 
-It takes one manadatory parameter: cache,
+It takes one mandatory parameter: cache,
 which is an object which understands get() and set() calls,
 such as an L<CHI> object.
 
@@ -92,21 +92,33 @@ sub AUTOLOAD {
 	my $func = $param;
 	my $object = $self->{'object'};
 
-	if($param !~ /^[gs]et_/) {
-		my $cache = $self->{'cache'};
-
-		if(scalar(@_) == 0) {
-			if(my $rc = $cache->get($param)) {
-				return $rc;
-			}
-		}
-
+	if($param =~ /^[gs]et_/) {
 		# $param = "SUPER::$param";
-		# return $cache->set($param, $self->$param(@_), 'never');
-		return $cache->set($param, $object->$func(@_), 'never');
+		return $object->$func(\@_);
 	}
+
+	my $cache = $self->{'cache'};
+
+	if(scalar(@_) == 0) {
+		# Retrieving a value
+		if(my $rc = $cache->get($param)) {
+			if(ref($rc) eq 'ARRAY') {
+				return @{$rc};
+			}
+			return $rc;
+		}
+	}
+
 	# $param = "SUPER::$param";
-	$object->$func(@_);
+	# return $cache->set($param, $self->$param(@_), 'never');
+	if($_[1]) {
+		# Storing an array
+		my $val = $object->$func(\@_);
+		$cache->set($param, $val, 'never');
+		return @{$val};
+	}
+	# Storing a scalar
+	return $cache->set($param, $object->$func($_[0]), 'never');
 }
 
 =head1 AUTHOR
