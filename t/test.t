@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::Most tests => 9;
+use Test::Most tests => 10;
 use Test::NoWarnings;
 use CHI;
 
@@ -11,7 +11,7 @@ BEGIN {
 }
 
 TEST: {
-	my $cache = CHI->new(driver => 'RawMemory', global => 1);
+	my $cache = CHI->new(driver => 'RawMemory', datastore => {});
 	$cache->on_set_error('die');
 	$cache->on_get_error('die');
 	my $l = new_ok('Class::Simple::Cached' => [ cache => $cache ]);
@@ -24,6 +24,8 @@ TEST: {
 	ok(scalar(@rc) == 2);
 	ok($rc[0] eq 'plugh');
 	ok($rc[1] eq 'xyzzy');
+
+	ok($cache->get('fred') eq 'wilma');
 
 	# foreach my $key($cache->get_keys()) {
 		# diag($key);
