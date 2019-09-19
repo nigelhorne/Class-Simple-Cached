@@ -92,10 +92,10 @@ sub AUTOLOAD {
 	my $func = $param;
 	my $object = $self->{'object'};
 
-	if($param =~ /^[gs]et_/) {
-		# $param = "SUPER::$param";
-		return $object->$func(\@_);
-	}
+	# if($param =~ /^[gs]et_/) {
+		# # $param = "SUPER::$param";
+		# return $object->$func(\@_);
+	# }
 
 	my $cache = $self->{'cache'};
 
