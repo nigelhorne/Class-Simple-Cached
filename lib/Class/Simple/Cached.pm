@@ -107,6 +107,15 @@ sub AUTOLOAD {
 			}
 			return $rc;
 		}
+		if(wantarray) {
+			my @rc = $object->$func();
+			if(scalar(@rc) == 0) {
+				return;
+			}
+			$cache->set($param, \@rc, 'never');
+			return @rc;
+		}
+		return $cache->set($param, $object->$func(), 'never');
 	}
 
 	# $param = "SUPER::$param";
