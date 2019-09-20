@@ -27,6 +27,12 @@ the status of an object that are otherwise expensive.
 It is up to the caller to maintain the cache if the object comes out of sync with the cache,
 for example by changing its state.
 
+Note that it only works on objects with a get/set model such as:
+
+    $obj->val($newval);
+    $oldval = $obj->val();
+
+
 =head1 SUBROUTINES/METHODS
 
 =head2 new
