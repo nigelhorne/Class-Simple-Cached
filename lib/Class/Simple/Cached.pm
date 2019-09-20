@@ -105,6 +105,9 @@ sub AUTOLOAD {
 			if(ref($rc) eq 'ARRAY') {
 				return @{$rc};
 			}
+			if($rc eq __PACKAGE__ . ">UNDEF<") {
+				return;
+			}
 			return $rc;
 		}
 		if(wantarray) {
@@ -115,7 +118,12 @@ sub AUTOLOAD {
 			$cache->set($param, \@rc, 'never');
 			return @rc;
 		}
-		return $cache->set($param, $object->$func(), 'never');
+		my $rc = $object->$func();
+		if(!defined($rc)) {
+			$cache->set($param, __PACKAGE__ . ">UNDEF<", 'never');
+			return;
+		}
+		return $cache->set($param, $rc, 'never');
 	}
 
 	# $param = "SUPER::$param";
@@ -136,6 +144,8 @@ sub AUTOLOAD {
 Nigel Horne, C<< <njh at bandsman.co.uk> >>
 
 =head1 BUGS
+
+Doesn't work with L<Memoize>.
 
 Please report any bugs or feature requests to C<bug-class-simple-cached at rt.cpan.org>,
 or through the web interface at

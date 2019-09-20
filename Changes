@@ -1,5 +1,8 @@
 Revision history for Class::Simple::Cached
 
+0.03
+	Improved handling of caching functionas that return undef
+
 0.02	Thu 19 Sep 19:30:43 EDT 2019
 	Fix working with arrays
 
