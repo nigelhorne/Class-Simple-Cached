@@ -83,11 +83,19 @@ sub _caller_class
 sub AUTOLOAD {
 	our $AUTOLOAD;
 	my $param = $AUTOLOAD;
-
 	$param =~ s/.*:://;
 
-	return if($param eq 'DESTROY');
 	my $self = shift;
+	my $cache = $self->{'cache'};
+
+	if($param eq 'DESTROY') {
+		if(defined($^V) && ($^V ge 'v5.14.0')) {
+			return if ${^GLOBAL_PHASE} eq 'DESTRUCT';	# >= 5.14.0 only
+		}
+		$cache->clear();
+		return;
+	}
+
 	# my $func = $self->{'object'} . "::$param";
 	my $func = $param;
 	my $object = $self->{'object'};
@@ -96,8 +104,6 @@ sub AUTOLOAD {
 		# # $param = "SUPER::$param";
 		# return $object->$func(\@_);
 	# }
-
-	my $cache = $self->{'cache'};
 
 	if(scalar(@_) == 0) {
 		# Retrieving a value
