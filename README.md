@@ -4,7 +4,7 @@ Class::Simple::Cached - cache messages to an object
 
 # VERSION
 
-Version 0.02
+Version 0.03
 
 # SYNOPSIS
 
@@ -34,6 +34,8 @@ and that is used.
 Nigel Horne, `<njh at bandsman.co.uk>`
 
 # BUGS
+
+Doesn't work with [Memoize](https://metacpan.org/pod/Memoize).
 
 Please report any bugs or feature requests to `bug-class-simple-cached at rt.cpan.org`,
 or through the web interface at
