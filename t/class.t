@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::Most tests => 19;
+use Test::Most tests => 28;
 use Test::NoWarnings;
 use CHI;
 
@@ -25,7 +25,18 @@ CLASS: {
 	ok($l->calls() == 1);
 	my @abc = $l->abc();
 	ok(scalar(@abc) == 3);
+	ok($abc[0] eq 'a');
+	ok($abc[1] eq 'b');
+	ok($abc[2] eq 'c');
+	@abc = $l->abc();
+	ok(scalar(@abc) == 3);
+	ok($abc[0] eq 'a');
+	ok($abc[1] eq 'b');
+	ok($abc[2] eq 'c');
 	my @a = $l->a();
+	ok(scalar(@a) == 1);
+	ok($a[0] eq 'a');
+	@a = $l->a();
 	ok(scalar(@a) == 1);
 	ok($a[0] eq 'a');
 
