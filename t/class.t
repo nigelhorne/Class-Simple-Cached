@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::Most tests => 28;
+use Test::Most tests => 29;
 use Test::NoWarnings;
 use CHI;
 
@@ -42,6 +42,9 @@ CLASS: {
 
 	ok(!defined($l->empty()));
 	ok(!defined($l->empty()));
+
+	my @empty = $l->empty();
+	ok(scalar(@empty) == 0);
 
 	# White box test the cache
 	ok($cache->get('barney') eq 'betty');
