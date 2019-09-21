@@ -40,11 +40,11 @@ CLASS: {
 	ok(scalar(@a) == 1);
 	ok($a[0] eq 'a');
 
-	ok(!defined($l->empty()));
-	ok(!defined($l->empty()));
-
 	my @empty = $l->empty();
 	ok(scalar(@empty) == 0);
+
+	ok(!defined($l->empty()));
+	ok(!defined($l->empty()));
 
 	# White box test the cache
 	ok($cache->get('barney') eq 'betty');
