@@ -10,6 +10,7 @@ t/class.t
 t/coverage.t
 t/critic.t
 t/dist.t
+t/eol.t
 t/kwalitee.t
 t/links.t
 t/manifest.t

@@ -45,7 +45,6 @@ WriteMakefile(
 				web => 'https://github.com/nigelhorne/Class-Simple-Cached/issues',
 				url => 'https://github.com/nigelhorne/Class-Simple-Cached/issues',
 			}
-		
 		},
 	},
 	MIN_PERL_VERSION	=> '5.6.2'	# Probably would work, but never tested on earlier versions than this
