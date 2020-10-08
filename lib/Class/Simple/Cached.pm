@@ -114,7 +114,11 @@ sub AUTOLOAD {
 	if(scalar(@_) == 0) {
 		# Retrieving a value
 		if(my $rc = $cache->get($param)) {
+			die $param if($rc eq 'never');
 			if(ref($rc) eq 'ARRAY') {
+				my @foo = @{$rc};
+				die $param if($foo[0] eq __PACKAGE__ . ">UNDEF<");
+				die $param if($foo[0] eq 'never');
 				return @{$rc};
 			}
 			if($rc eq __PACKAGE__ . ">UNDEF<") {
