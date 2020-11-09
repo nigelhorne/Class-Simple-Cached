@@ -23,11 +23,13 @@ our $VERSION = '0.03';
 
 A sub-class of L<Class::Simple> which caches calls to read
 the status of an object that are otherwise expensive.
+You can use this class to create a caching layer to an object of any class.
 
 It is up to the caller to maintain the cache if the object comes out of sync with the cache,
 for example by changing its state.
 
-Note that it only works on objects with a get/set model such as:
+You can use this class to create a caching layer to an object of any class
+that works on objects with a get/set model such as:
 
     $obj->val($newval);
     $oldval = $obj->val();
@@ -188,13 +190,29 @@ You can also look for information at:
 
 =over 4
 
+=item * MetaCPAN
+
+L<https://metacpan.org/release/Class-Simple-Cached>
+
 =item * RT: CPAN's request tracker
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Class-Simple-Cached>
+L<https://rt.cpan.org/NoAuth/Bugs.html?Dist=Class-Simple-Cached>
+
+=item * CPANTS
+
+L<http://cpants.cpanauthors.org/dist/Class-Simple-Cached>
+
+=item * CPAN Testers' Matrix
+
+L<http://matrix.cpantesters.org/?dist=Class-Simple-Cached>
 
 =item * CPAN Ratings
 
 L<http://cpanratings.perl.org/d/Class-Simple-Cached>
+
+=item * CPAN Testers Dependencies
+
+L<http://deps.cpantesters.org/?module=Class::Simple::Cached>
 
 =item * Search CPAN
 
