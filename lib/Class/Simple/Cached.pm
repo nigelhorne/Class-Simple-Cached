@@ -167,6 +167,8 @@ Nigel Horne, C<< <njh at bandsman.co.uk> >>
 
 Doesn't work with L<Memoize>.
 
+Only works on messages that take no arguments.
+
 Please report any bugs or feature requests to C<bug-class-simple-cached at rt.cpan.org>,
 or through the web interface at
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Class-Simple-Cached>.
