@@ -38,10 +38,9 @@ WriteMakefile(
 				url => 'git://github.com/nigelhorne/Class-Simple-Cached.git',
 				web => 'https://github.com/nigelhorne/Class-Simple-Cached',
 				repository => 'https://github.com/nigelhorne/Class-Simple-Cached',
-			},
-			bugtracker => {
+			}, bugtracker => {
 				# web => 'https://rt.cpan.org/Public/Dist/Display.html?Name=Class-Simple-Cached',
-				# mailto => 'bug-Class-Simple-Cached@rt.cpan.org'
+				mailto => 'bug-Class-Simple-Cached@rt.cpan.org',
 				web => 'https://github.com/nigelhorne/Class-Simple-Cached/issues',
 				url => 'https://github.com/nigelhorne/Class-Simple-Cached/issues',
 			}

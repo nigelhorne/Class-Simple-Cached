@@ -119,11 +119,11 @@ sub AUTOLOAD {
 			die $param if($rc eq 'never');
 			if(ref($rc) eq 'ARRAY') {
 				my @foo = @{$rc};
-				die $param if($foo[0] eq __PACKAGE__ . ">UNDEF<");
+				die $param if($foo[0] eq __PACKAGE__ . '>UNDEF<');
 				die $param if($foo[0] eq 'never');
 				return @{$rc};
 			}
-			if($rc eq __PACKAGE__ . ">UNDEF<") {
+			if($rc eq __PACKAGE__ . '>UNDEF<') {
 				return;
 			}
 			return $rc;
@@ -138,7 +138,7 @@ sub AUTOLOAD {
 		}
 		my $rc = $object->$func();
 		if(!defined($rc)) {
-			$cache->set($param, __PACKAGE__ . ">UNDEF<", 'never');
+			$cache->set($param, __PACKAGE__ . '>UNDEF<', 'never');
 			return;
 		}
 		return $cache->set($param, $rc, 'never');
@@ -150,6 +150,10 @@ sub AUTOLOAD {
 		# Storing an array
 		# We store a ref to the array, and dereference on retrieval
 		my $val = $object->$func(\@_);
+		if(!defined($val)) {
+			$cache->set($param, __PACKAGE__ . '>UNDEF<', 'never');
+			return;
+		}
 		$cache->set($param, $val, 'never');
 		return @{$val};
 	}
@@ -223,7 +227,7 @@ L<http://search.cpan.org/dist/Class-Simple-Cached/>
 =head1 LICENSE AND COPYRIGHT
 
 Author Nigel Horne: C<njh@bandsman.co.uk>
-Copyright (C) 2019, Nigel Horne
+Copyright (C) 2019-2020, Nigel Horne
 
 Usage is subject to licence terms.
 The licence terms of this software are as follows:
