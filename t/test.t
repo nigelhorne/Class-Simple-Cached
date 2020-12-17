@@ -30,7 +30,7 @@ TEST: {
 
 	ok($cache->get('fred') eq 'wilma');
 
-	if(defined('TEST_VERBOSE')) {
+	if($ENV{'TEST_VERBOSE'}) {
 		foreach my $key($cache->get_keys()) {
 			diag($key);
 		}
