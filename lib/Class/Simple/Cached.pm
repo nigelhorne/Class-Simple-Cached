@@ -30,6 +30,8 @@ for example by changing its state.
 You can use this class to create a caching layer to an object of any class
 that works on objects with a get/set model such as:
 
+    use Class::Simple;
+    my $obj = Class::Simple->new();
     $obj->val($newval);
     $oldval = $obj->val();
 
@@ -40,7 +42,7 @@ that works on objects with a get/set model such as:
 Creates a Class::Simple::Cached object.
 
 It takes one mandatory parameter: cache,
-which is an object which understands get() and set() calls,
+which is an object which understands clear(), get() and set() calls,
 such as an L<CHI> object.
 
 It takes one optional argument: object,
@@ -54,7 +56,11 @@ sub new {
 	my $proto = shift;
 	my $class = ref($proto) || $proto;
 
-	return unless(defined($class));
+	# Use Class::Simple::Cached->new(), not Class::Simple::Cached::new()
+	if(!defined($class)) {
+		carp(__PACKAGE__, ' use ->new() not ::new() to instantiate');
+		return;
+	}
 
 	my %args;
 	if(ref($_[0]) eq 'HASH') {
@@ -134,12 +140,11 @@ sub AUTOLOAD {
 			$cache->set($param, \@rc, 'never');
 			return @rc;
 		}
-		my $rc = $object->$func();
-		if(!defined($rc)) {
-			$cache->set($param, __PACKAGE__ . '>UNDEF<', 'never');
-			return;
+		if(defined(my $rc = $object->$func())) {
+			return $cache->set($param, $rc, 'never');
 		}
-		return $cache->set($param, $rc, 'never');
+		$cache->set($param, __PACKAGE__ . '>UNDEF<', 'never');
+		return;
 	}
 
 	# $param = "SUPER::$param";
@@ -147,13 +152,12 @@ sub AUTOLOAD {
 	if($_[1]) {
 		# Storing an array
 		# We store a ref to the array, and dereference on retrieval
-		my $val = $object->$func(\@_);
-		if(!defined($val)) {
-			$cache->set($param, __PACKAGE__ . '>UNDEF<', 'never');
-			return;
+		if(defined(my $val = $object->$func(\@_))) {
+			$cache->set($param, $val, 'never');
+			return @{$val};
 		}
-		$cache->set($param, $val, 'never');
-		return @{$val};
+		$cache->set($param, __PACKAGE__ . '>UNDEF<', 'never');
+		return;
 	}
 	# Storing a scalar
 	return $cache->set($param, $object->$func($_[0]), 'never');
@@ -169,16 +173,9 @@ Doesn't work with L<Memoize>.
 
 Only works on messages that take no arguments.
 
-Please report any bugs or feature requests to C<bug-class-simple-cached at rt.cpan.org>,
-or through the web interface at
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Class-Simple-Cached>.
+Please report any bugs or feature requests to L<https://github.com/nigelhorne/Class-Simple-Readonly/issues>.
 I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
-
-params() returns a ref which means that calling routines can change the hash
-for other routines.
-Take a local copy before making amendments to the table if you don't want unexpected
-things to happen.
 
 =head1 SEE ALSO
 
@@ -198,9 +195,9 @@ You can also look for information at:
 
 L<https://metacpan.org/release/Class-Simple-Cached>
 
-=item * RT: CPAN's request tracker
+=item * Source Repository
 
-L<https://rt.cpan.org/NoAuth/Bugs.html?Dist=Class-Simple-Cached>
+L<https://github.com/nigelhorne/Class-Simple-Readonly-Cached>
 
 =item * CPANTS
 
@@ -223,7 +220,7 @@ L<http://deps.cpantesters.org/?module=Class::Simple::Cached>
 =head1 LICENCE AND COPYRIGHT
 
 Author Nigel Horne: C<njh@bandsman.co.uk>
-Copyright (C) 2019-2020, Nigel Horne
+Copyright (C) 2019-2021, Nigel Horne
 
 Usage is subject to licence terms.
 The licence terms of this software are as follows:

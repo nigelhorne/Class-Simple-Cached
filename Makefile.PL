@@ -20,8 +20,7 @@ WriteMakefile(
 		'Test::NoWarnings' => 0,
 		'Test::Requires' => 0,
 		# 'Test::Kwalitee' => 0,
-	},
-	PREREQ_PM => {
+	}, PREREQ_PM => {
 		'Carp' => 0,
 		'Class::Simple' => 0,
 	},
