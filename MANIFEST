@@ -6,6 +6,7 @@ MANIFEST			This list of files
 MANIFEST.SKIP
 README.md
 t/00-load.t
+t/10-new.t
 t/carp.t
 t/class.t
 t/coverage.t
