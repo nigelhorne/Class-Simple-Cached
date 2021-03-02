@@ -77,7 +77,7 @@ sub new {
 		$args{'object'} = Class::Simple->new(%args);
 	}
 
-	if($args{'cache'}) {
+	if($args{'cache'} && ref($args{'cache'})) {
 		return bless \%args, $class;
 	}
 	Carp::carp('Usage: ', __PACKAGE__, '->new(cache => $cache [, object => $object ], %args)');
