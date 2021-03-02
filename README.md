@@ -7,7 +7,7 @@ Class::Simple::Cached - cache messages to an object
 
 # VERSION
 
-Version 0.03
+Version 0.04
 
 # SYNOPSIS
 

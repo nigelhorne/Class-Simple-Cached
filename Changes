@@ -1,6 +1,6 @@
 Revision history for Class::Simple::Cached
 
-0.04
+0.04	Tue Mar  2 10:26:40 EST 2021
 	Fix "Can't use an undefined value as an ARRAY reference"
 	Allow cache to be a reference to a hash
 
