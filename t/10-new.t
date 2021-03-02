@@ -3,8 +3,12 @@
 use strict;
 use warnings;
 
-use Test::Most tests => 2;
-use Class::Simple::Cached;
+use Test::Most tests => 4;
 
-isa_ok(Class::Simple::Cached->new(), 'Class::Simple::Cached', 'Creating Class::Simple::Cached object');
+BEGIN {
+	use_ok('Class::Simple::Cached');
+}
+
+ok(!defined(Class::Simple::Cached->new()));
+isa_ok(Class::Simple::Cached->new(cache => {}), 'Class::Simple::Cached', 'Creating Class::Simple::Cached object');
 ok(!defined(Class::Simple::Cached::new()));

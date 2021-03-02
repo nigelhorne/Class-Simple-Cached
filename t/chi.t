@@ -40,9 +40,9 @@ CLASS: {
 	ok(scalar(@a) == 1);
 	ok($a[0] eq 'a');
 
+	# FIXME: why is this test different from t/hash.t?
 	my @empty = $l->empty();
 	ok(scalar(@empty) == 0);
-
 	ok(!defined($l->empty()));
 	ok(!defined($l->empty()));
 
@@ -54,9 +54,11 @@ CLASS: {
 	ok(ref($abc) eq 'ARRAY');
 	ok(scalar(@{$abc}) == 3);
 
-	# foreach my $key($cache->get_keys()) {
-		# diag($key);
-	# }
+	if(defined($ENV{'TEST_VERBOSE'})) {
+		foreach my $key($cache->get_keys()) {
+			diag("$key = ", $cache->get($key));
+		}
+	}
 }
 
 package x;
