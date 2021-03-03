@@ -206,6 +206,7 @@ Nigel Horne, C<< <njh at bandsman.co.uk> >>
 Doesn't work with L<Memoize>.
 
 Only works on messages that take no arguments.
+For that, use L<Class::Simple::Readonly::Cached>.
 
 Please report any bugs or feature requests to L<https://github.com/nigelhorne/Class-Simple-Readonly/issues>.
 I will be notified, and then you'll
