@@ -1,4 +1,7 @@
 ---
+# See https://github.com/actions/virtual-environments
+
+name: Test Code
 on:
   push:
     branches:
@@ -10,10 +13,10 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os:
           - macos-latest
-          - ubuntu-16.04
           - ubuntu-18.04
           - ubuntu-20.04
           - windows-2019
