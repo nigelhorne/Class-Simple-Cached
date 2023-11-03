@@ -32,8 +32,8 @@ that works on objects with a get/set model such as:
 
     use Class::Simple;
     my $obj = Class::Simple->new();
-    $obj->val($newval);
-    $oldval = $obj->val();
+    $obj->val('foo');
+    my $oldval = $obj->val();
 
 =head1 SUBROUTINES/METHODS
 

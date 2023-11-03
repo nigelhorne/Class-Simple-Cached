@@ -1,15 +1,16 @@
-#!perl -w
+#!/usr/bin/perl -w
 
 use strict;
 use warnings;
 use Test::Most;
 
 if($ENV{AUTHOR_TESTING}) {
-	eval 'use Test::Pod::LinkCheck';
+	eval 'use Test::Synopsis';
+
 	if($@) {
-		plan(skip_all => 'Test::Pod::LinkCheck required for testing POD');
+		plan(skip_all => 'Test::Synopsis required for testing POD Synopsis');
 	} else {
-		Test::Pod::LinkCheck->new->all_pod_ok();
+		all_synopsis_ok();
 	}
 } else {
 	plan(skip_all => 'Author tests not required for installation');
