@@ -94,10 +94,27 @@ sub can {
 	my $self = shift;
 	my $method = shift;
 
-	if(($method eq 'new') || $self->{'object'}->can($method)) {
+	if(($method eq 'new') || $self->{'object'}->can($method) || $self->SUPER::can($method)) {
 		return 1;
 	}
 	return 0;
+}
+
+=head2 isa
+
+Returns if the embedded object is the given type of object
+
+=cut
+
+sub isa
+{
+	my $self = shift;
+	my $class = shift;
+
+	if($class eq ref($self) || ($class eq __PACKAGE__) || $self->SUPER::isa($self)) {
+		return 1;
+	}
+	return $self->{'object'}->isa($class);
 }
 
 # sub _caller_class
