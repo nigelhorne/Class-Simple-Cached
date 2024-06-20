@@ -84,6 +84,22 @@ sub new {
 	return;	# undef
 }
 
+=head2 can
+
+Returns if the embedded object can handle a message
+
+=cut
+
+sub can {
+	my $self = shift;
+	my $method = shift;
+
+	if(($method eq 'new') || $self->{'object'}->can($method)) {
+		return 1;
+	}
+	return 0;
+}
+
 # sub _caller_class
 # {
 	# my $self = shift;
@@ -116,13 +132,13 @@ sub AUTOLOAD {
 		return;
 	}
 
-	# my $func = $self->{'object'} . "::$param";
-	my $func = $param;
+	# my $method = $self->{'object'} . "::$param";
+	my $method = $param;
 	my $object = $self->{'object'};
 
 	# if($param =~ /^[gs]et_/) {
 		# # $param = "SUPER::$param";
-		# return $object->$func(\@_);
+		# return $object->$method(\@_);
 	# }
 
 	if(scalar(@_) == 0) {
@@ -147,7 +163,7 @@ sub AUTOLOAD {
 			return $rc;
 		}
 		if(wantarray) {
-			my @rc = $object->$func();
+			my @rc = $object->$method();
 			if(scalar(@rc) == 0) {
 				return;
 			}
@@ -158,7 +174,7 @@ sub AUTOLOAD {
 			}
 			return @rc;
 		}
-		if(defined(my $rc = $object->$func())) {
+		if(defined(my $rc = $object->$method())) {
 			if(ref($cache) eq 'HASH') {
 				return $cache->{$param} = $rc;
 			}
@@ -176,7 +192,7 @@ sub AUTOLOAD {
 	if($_[1]) {
 		# Storing an array
 		# We store a ref to the array, and dereference on retrieval
-		if(defined(my $val = $object->$func(\@_))) {
+		if(defined(my $val = $object->$method(\@_))) {
 			if(ref($cache) eq 'HASH') {
 				$cache->{$param} = $val;
 			} else {
@@ -192,9 +208,9 @@ sub AUTOLOAD {
 	}
 	# Storing a scalar
 	if(ref($cache) eq 'HASH') {
-		return $cache->{$param} = $object->$func($_[0]);
+		return $cache->{$param} = $object->$method($_[0]);
 	}
-	return $cache->set($param, $object->$func($_[0]), 'never');
+	return $cache->set($param, $object->$method($_[0]), 'never');
 }
 
 =head1 AUTHOR
