@@ -53,7 +53,8 @@ and that is used.
 
 =cut
 
-sub new {
+sub new
+{
 	my $proto = shift;
 	my $class = ref($proto) || $proto;
 
@@ -90,7 +91,8 @@ Returns if the embedded object can handle a message
 
 =cut
 
-sub can {
+sub can
+{
 	my $self = shift;
 	my $method = shift;
 
@@ -127,7 +129,8 @@ sub isa
 	# }
 # }
 
-sub AUTOLOAD {
+sub AUTOLOAD
+{
 	our $AUTOLOAD;
 	my $param = $AUTOLOAD;
 	$param =~ s/.*:://;
