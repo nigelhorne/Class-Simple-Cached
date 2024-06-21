@@ -94,7 +94,7 @@ You can also look for information at:
 # LICENCE AND COPYRIGHT
 
 Author Nigel Horne: `njh@bandsman.co.uk`
-Copyright (C) 2019-2021, Nigel Horne
+Copyright (C) 2019-2024, Nigel Horne
 
 Usage is subject to licence terms.
 The licence terms of this software are as follows:

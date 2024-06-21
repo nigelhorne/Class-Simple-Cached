@@ -278,10 +278,6 @@ L<http://cpants.cpanauthors.org/dist/Class-Simple-Cached>
 
 L<http://matrix.cpantesters.org/?dist=Class-Simple-Cached>
 
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/Class-Simple-Cached>
-
 =item * CPAN Testers Dependencies
 
 L<http://deps.cpantesters.org/?module=Class::Simple::Cached>
@@ -291,7 +287,7 @@ L<http://deps.cpantesters.org/?module=Class::Simple::Cached>
 =head1 LICENCE AND COPYRIGHT
 
 Author Nigel Horne: C<njh@bandsman.co.uk>
-Copyright (C) 2019-2021, Nigel Horne
+Copyright (C) 2019-2024, Nigel Horne
 
 Usage is subject to licence terms.
 The licence terms of this software are as follows:
