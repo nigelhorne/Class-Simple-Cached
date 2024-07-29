@@ -122,7 +122,7 @@ sub isa
 # sub _caller_class
 # {
 	# my $self = shift;
-# 
+#
 	# if(ref($self->{'object'}) eq 'Class::Simple') {
 		# # return $self->SUPER::_caller_class(@_);
 		# return $self->Class::Simple::_caller_class(@_);
