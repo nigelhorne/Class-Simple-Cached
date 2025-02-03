@@ -21,8 +21,7 @@ our $VERSION = '0.05';
 
 =head1 SYNOPSIS
 
-A sub-class of L<Class::Simple> which caches calls to read
-the status of an object that are otherwise expensive.
+A sub-class of L<Class::Simple> which caches calls to read the status of an object that are otherwise expensive.
 
 It is up to the caller to maintain the cache if the object comes out of sync with the cache,
 for example by changing its state.
@@ -70,7 +69,7 @@ sub new
 	} elsif(ref($_[0])) {
 		Carp::carp('Usage: ', __PACKAGE__, '->new(cache => $cache [, object => $object ], %args)');
 		return;
-	} elsif(@_ % 2 == 0) {
+	} elsif((@_ % 2) == 0) {
 		%args = @_;
 	}
 
@@ -245,8 +244,8 @@ Only works on messages that take no arguments.
 For that, use L<Class::Simple::Readonly::Cached>.
 
 Please report any bugs or feature requests to L<https://github.com/nigelhorne/Class-Simple-Readonly/issues>.
-I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
+I will be notified,
+and then you'll automatically be notified of the progress on your bug as I make changes.
 
 =head1 SEE ALSO
 
@@ -287,7 +286,7 @@ L<http://deps.cpantesters.org/?module=Class::Simple::Cached>
 =head1 LICENCE AND COPYRIGHT
 
 Author Nigel Horne: C<njh@bandsman.co.uk>
-Copyright (C) 2019-2024, Nigel Horne
+Copyright (C) 2019-2025, Nigel Horne
 
 Usage is subject to licence terms.
 The licence terms of this software are as follows:
