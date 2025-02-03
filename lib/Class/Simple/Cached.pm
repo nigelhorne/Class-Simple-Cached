@@ -73,11 +73,14 @@ sub new
 		%args = @_;
 	}
 
-	if(!defined($args{'object'})) {
-		$args{'object'} = Class::Simple->new(%args);
-	}
+	# Later Perls can use //=
+	$args{object} ||= Class::Simple->new(%args);	# Default to Class::Simple object
 
 	if($args{'cache'} && ref($args{'cache'})) {
+		# Ensure cache implements required methods
+		if((ref($args{cache}) ne 'HASH') && !($args{cache}->can('get') && $args{cache}->can('set') && $args{cache}->can('clear'))) {
+			Carp::croak("Cache object must implement 'get', 'set', and 'clear' methods");
+		}
 		return bless \%args, $class;
 	}
 	Carp::carp('Usage: ', __PACKAGE__, '->new(cache => $cache [, object => $object ], %args)');
