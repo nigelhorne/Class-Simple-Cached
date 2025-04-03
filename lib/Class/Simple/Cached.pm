@@ -136,14 +136,14 @@ sub isa
 sub DESTROY
 {
 	my $self = shift;
-	my $cache = $self->{'cache'};
-
-	if(ref($cache) eq 'HASH') {
-		while(my($key, $value) = each %{$cache}) {
-			delete $cache->{$key};
+	if(my $cache = $self->{'cache'}) {
+		if(ref($cache) eq 'HASH') {
+			while(my($key, $value) = each %{$cache}) {
+				delete $cache->{$key};
+			}
+		} else {
+			$cache->clear();
 		}
-	} else {
-		$cache->clear();
 	}
 }
 
