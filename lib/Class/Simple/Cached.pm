@@ -26,8 +26,9 @@ A sub-class of L<Class::Simple> which caches calls to read the status of an obje
 It is up to the caller to maintain the cache if the object comes out of sync with the cache,
 for example by changing its state.
 
-You can use this class to create a caching layer to an object of any class
-that works on objects with a get/set model such as:
+You can use this class to create a caching layer for any object of any class
+that works on objects with a get/set model,
+such as:
 
     use Class::Simple;
     my $obj = Class::Simple->new();
@@ -46,7 +47,7 @@ such as an L<CHI> object;
 or is a reference to a hash where the return values are to be stored.
 
 It takes one optional argument: object,
-which is an object which is taken to be the object to be cached.
+which is an object that is taken to be the object to be cached.
 If not given, an object of the class L<Class::Simple> is instantiated
 and that is used.
 
@@ -114,7 +115,7 @@ sub isa
 {
 	my ($self, $class) = @_;
 
-	if($class eq ref($self) || ($class eq __PACKAGE__) || $self->SUPER::isa($self)) {
+	if($class eq ref($self) || ($class eq __PACKAGE__) || $self->SUPER::isa($class)) {
 		return 1;
 	}
 	return $self->{'object'}->isa($class);
