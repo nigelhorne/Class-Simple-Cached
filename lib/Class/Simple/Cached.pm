@@ -130,11 +130,26 @@ sub isa
 	# }
 # }
 
+# For older Perls - define a DESTROY method
+# See https://github.com/Perl/perl5/issues/14673
+sub DESTROY
+{
+	my $self = shift;
+	my $cache = $self->{'cache'};
+
+	if(ref($cache) eq 'HASH') {
+		while(my($key, $value) = each %{$cache}) {
+			delete $cache->{$key};
+		}
+	} else {
+		$cache->clear();
+	}
+}
+
 sub AUTOLOAD
 {
 	our $AUTOLOAD;
-	my $param = $AUTOLOAD;
-	$param =~ s/.*:://;
+	my ($param) = $AUTOLOAD =~ /::(\w+)$/;
 
 	my $self = shift;
 	my $cache = $self->{'cache'};
