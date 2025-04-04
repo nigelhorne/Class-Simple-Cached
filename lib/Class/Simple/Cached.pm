@@ -72,6 +72,8 @@ sub new
 	# Later Perls can use //=
 	$params->{object} ||= Class::Simple->new(%{$params});	# Default to Class::Simple object
 
+	# FIXME: If there are arguments, put the values in the cache
+
 	# Ensure cache implements required methods
 	if(Scalar::Util::blessed($params->{cache})) {
 		unless($params->{cache}->can('get') && $params->{cache}->can('set') && $params->{cache}->can('purge')) {
@@ -94,13 +96,9 @@ Returns if the embedded object can handle a message
 
 sub can
 {
-	my $self = shift;
-	my $method = shift;
+	my ($self, $method) = @_;
 
-	if(($method eq 'new') || $self->{'object'}->can($method) || $self->SUPER::can($method)) {
-		return 1;
-	}
-	return 0;
+	return ($method eq 'new') || $self->{'object'}->can($method) || $self->SUPER::can($method);
 }
 
 =head2 isa
@@ -137,11 +135,12 @@ sub DESTROY
 	if(my $cache = $self->{'cache'}) {
 		if(ref($cache) eq 'HASH') {
 			my $class = ref($self);
-			while(my($key, $value) = each %{$cache}) {
-				if($key =~ /^$class/) {
-					delete $cache->{$key};
-				}
-			}
+			# while(my($key, $value) = each %{$cache}) {
+				# if($key =~ /^$class/) {
+					# delete $cache->{$key};
+				# }
+			# }
+			delete $cache->{$_} for grep { /^$class/ } keys %{$cache};
 		} else {
 			$cache->purge();
 		}
@@ -159,11 +158,12 @@ sub AUTOLOAD
 	if($param eq 'DESTROY') {
 		if(ref($cache) eq 'HASH') {
 			my $class = ref($self);
-			while(my($key, $value) = each %{$cache}) {
-				if($key =~ /^$class/) {
-					delete $cache->{$key};
-				}
-			}
+			# while(my($key, $value) = each %{$cache}) {
+				# if($key =~ /^$class/) {
+					# delete $cache->{$key};
+				# }
+			# }
+			delete $cache->{$_} for grep { /^$class/ } keys %{$cache};
 			return;
 		}
 		if(defined($^V) && ($^V ge 'v5.14.0')) {
@@ -185,7 +185,8 @@ sub AUTOLOAD
 	#	e.g. my $cache_key = join('|', $param, @_);
 
 	my $key = ref($self) . ":$param";
-	if(scalar(@_) == 0) {
+
+	if(scalar(@_) == 0) {	# Getter
 		# Retrieving a value
 		my $rc;
 		if(ref($cache) eq 'HASH') {
@@ -230,6 +231,8 @@ sub AUTOLOAD
 		$cache->set($key, __PACKAGE__ . '>UNDEF<', 'never');
 		return;
 	}
+
+	# Setter
 
 	# $param = "SUPER::$param";
 	# return $cache->set($key, $self->$param(@_), 'never');
