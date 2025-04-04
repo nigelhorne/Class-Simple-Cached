@@ -24,6 +24,7 @@ WriteMakefile(
 	PREREQ_PM => {
 		'Carp' => 0,
 		'Class::Simple' => 0,
+		'Params::Get' => 0,
 	}, TEST_REQUIRES => {
 		'CHI' => 0,
 		'Class::Simple' => 0,

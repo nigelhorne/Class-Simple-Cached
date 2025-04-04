@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use Carp;
 use Class::Simple;
+use Params::Get;
+use Scalar::Util;
 
 my @ISA = ('Class::Simple');
 
@@ -21,10 +23,11 @@ our $VERSION = '0.05';
 
 =head1 SYNOPSIS
 
-A sub-class of L<Class::Simple> which caches calls to read the status of an object that are otherwise expensive.
+A subclass of L<Class::Simple> which caches calls to read the status of an object that are otherwise expensive.
 
 It is up to the caller to maintain the cache if the object comes out of sync with the cache,
-for example by changing its state.
+for example,
+by changing its state.
 
 You can use this class to create a caching layer for any object of any class
 that works on objects with a get/set model,
@@ -64,28 +67,23 @@ sub new
 		return;
 	}
 
-	my %args;
-	if(ref($_[0]) eq 'HASH') {
-		%args = %{$_[0]};
-	} elsif(ref($_[0])) {
-		Carp::carp('Usage: ', __PACKAGE__, '->new(cache => $cache [, object => $object ], %args)');
-		return;
-	} elsif((@_ % 2) == 0) {
-		%args = @_;
-	}
+	my $params = Params::Get::get_params('cache', @_);
 
 	# Later Perls can use //=
-	$args{object} ||= Class::Simple->new(%args);	# Default to Class::Simple object
+	$params->{object} ||= Class::Simple->new(%{$params});	# Default to Class::Simple object
 
-	if($args{'cache'} && ref($args{'cache'})) {
-		# Ensure cache implements required methods
-		if((ref($args{cache}) ne 'HASH') && !($args{cache}->can('get') && $args{cache}->can('set') && $args{cache}->can('purge'))) {
+	# Ensure cache implements required methods
+	if(Scalar::Util::blessed($params->{cache})) {
+		unless($params->{cache}->can('get') && $params->{cache}->can('set') && $params->{cache}->can('purge')) {
 			Carp::croak("Cache object must implement 'get', 'set', and 'purge' methods");
 		}
-		return bless \%args, $class;
+		return bless $params, $class;
 	}
-	Carp::carp('Usage: ', __PACKAGE__, '->new(cache => $cache [, object => $object ], %args)');
-	return;	# undef
+	if(ref($params->{'cache'}) eq 'HASH') {
+		return bless $params, $class;
+	}
+
+	Carp::croak("$class: Cache must be ref to HASH or object");
 }
 
 =head2 can
