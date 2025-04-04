@@ -24,7 +24,7 @@ my $cache = {};
 	is($cached_obj->val(), 'foo', 'Value retrieved correctly from the underlying object');
 
 	# Since the call above was cached, the cache should now contain the value.
-	is($cache->{'val'}, 'foo', "Cache entry for 'val' exists and is correct" );
+	is($cache->{'Class::Simple::Cached:val'}, 'foo', "Cache entry for 'val' exists and is correct" );
 
 	# Now, change the underlying object's value directly.
 	#column (This is just to show that the cache does not update automatically.)
@@ -37,4 +37,4 @@ my $cache = {};
 	undef $cached_obj;
 }
 
-ok(!exists($cache->{'val'}), 'Cache has been cleared');
+ok(!exists($cache->{'Class::Simple::Cached:val'}), 'Cache has been cleared');

@@ -42,7 +42,7 @@ such as:
 Creates a Class::Simple::Cached object.
 
 It takes one mandatory parameter: cache,
-which is either an object which understands clear(), get() and set() calls,
+which is either an object which understands purge(), get() and set() calls,
 such as an L<CHI> object;
 or is a reference to a hash where the return values are to be stored.
 
@@ -79,8 +79,8 @@ sub new
 
 	if($args{'cache'} && ref($args{'cache'})) {
 		# Ensure cache implements required methods
-		if((ref($args{cache}) ne 'HASH') && !($args{cache}->can('get') && $args{cache}->can('set') && $args{cache}->can('clear'))) {
-			Carp::croak("Cache object must implement 'get', 'set', and 'clear' methods");
+		if((ref($args{cache}) ne 'HASH') && !($args{cache}->can('get') && $args{cache}->can('set') && $args{cache}->can('purge'))) {
+			Carp::croak("Cache object must implement 'get', 'set', and 'purge' methods");
 		}
 		return bless \%args, $class;
 	}
@@ -138,11 +138,14 @@ sub DESTROY
 	my $self = shift;
 	if(my $cache = $self->{'cache'}) {
 		if(ref($cache) eq 'HASH') {
+			my $class = ref($self);
 			while(my($key, $value) = each %{$cache}) {
-				delete $cache->{$key};
+				if($key =~ /^$class/) {
+					delete $cache->{$key};
+				}
 			}
 		} else {
-			$cache->clear();
+			$cache->purge();
 		}
 	}
 }
@@ -157,15 +160,18 @@ sub AUTOLOAD
 
 	if($param eq 'DESTROY') {
 		if(ref($cache) eq 'HASH') {
+			my $class = ref($self);
 			while(my($key, $value) = each %{$cache}) {
-				delete $cache->{$key};
+				if($key =~ /^$class/) {
+					delete $cache->{$key};
+				}
 			}
 			return;
 		}
 		if(defined($^V) && ($^V ge 'v5.14.0')) {
 			return if ${^GLOBAL_PHASE} eq 'DESTRUCT';	# >= 5.14.0 only
 		}
-		$cache->clear();
+		$cache->purge();
 		return;
 	}
 
@@ -180,13 +186,14 @@ sub AUTOLOAD
 	# TODO: To add argument support, make the code more than simply "param",
 	#	e.g. my $cache_key = join('|', $param, @_);
 
+	my $key = ref($self) . ":$param";
 	if(scalar(@_) == 0) {
 		# Retrieving a value
 		my $rc;
 		if(ref($cache) eq 'HASH') {
-			$rc = $cache->{$param};
+			$rc = $cache->{$key};
 		} else {
-			$rc = $cache->get($param);
+			$rc = $cache->get($key);
 		}
 		if($rc) {
 			die $param if($rc eq 'never');
@@ -207,49 +214,49 @@ sub AUTOLOAD
 				return;
 			}
 			if(ref($cache) eq 'HASH') {
-				$cache->{$param} = \@rc;
+				$cache->{$key} = \@rc;
 			} else {
-				$cache->set($param, \@rc, 'never');
+				$cache->set($key, \@rc, 'never');
 			}
 			return @rc;
 		}
 		if(defined(my $rc = $object->$param())) {
 			if(ref($cache) eq 'HASH') {
-				return $cache->{$param} = $rc;
+				return $cache->{$key} = $rc;
 			}
-			return $cache->set($param, $rc, 'never');
+			return $cache->set($key, $rc, 'never');
 		}
 		if(ref($cache) eq 'HASH') {
-			return $cache->{$param} = __PACKAGE__ . '>UNDEF<';
+			return $cache->{$key} = __PACKAGE__ . '>UNDEF<';
 		}
-		$cache->set($param, __PACKAGE__ . '>UNDEF<', 'never');
+		$cache->set($key, __PACKAGE__ . '>UNDEF<', 'never');
 		return;
 	}
 
 	# $param = "SUPER::$param";
-	# return $cache->set($param, $self->$param(@_), 'never');
+	# return $cache->set($key, $self->$param(@_), 'never');
 	if($_[1]) {
 		# Storing an array
 		# We store a ref to the array, and dereference on retrieval
 		if(defined(my $val = $object->$param(\@_))) {
 			if(ref($cache) eq 'HASH') {
-				$cache->{$param} = $val;
+				$cache->{$key} = $val;
 			} else {
-				$cache->set($param, $val, 'never');
+				$cache->set($key, $val, 'never');
 			}
 			return @{$val};
 		}
 		if(ref($cache) eq 'HASH') {
 			return $cache->{$param} = __PACKAGE__ . '>UNDEF<';
 		}
-		$cache->set($param, __PACKAGE__ . '>UNDEF<', 'never');
+		$cache->set($key, __PACKAGE__ . '>UNDEF<', 'never');
 		return;
 	}
 	# Storing a scalar
 	if(ref($cache) eq 'HASH') {
-		return $cache->{$param} = $object->$param($_[0]);
+		return $cache->{$key} = $object->$param($_[0]);
 	}
-	return $cache->set($param, $object->$param($_[0]), 'never');
+	return $cache->set($key, $object->$param($_[0]), 'never');
 }
 
 =head1 AUTHOR

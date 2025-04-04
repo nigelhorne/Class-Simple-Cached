@@ -8,6 +8,7 @@ Revision history for Class::Simple::Cached
 	Better argument testing to new()
 	Handle https://github.com/Perl/perl5/issues/14673
 	Fix isa() to work properly on subclasses
+	Keep class name in the key to keep purges safer
 
 0.05	Mon Jul 29 21:29:15 EDT 2024
 	Commented out what I believe is legacy code
