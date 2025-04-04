@@ -67,7 +67,7 @@ sub new
 		return;
 	}
 
-	my $params = Params::Get::get_params('cache', @_);
+	my $params = Params::Get::get_params('cache', @_) || {};
 
 	# Later Perls can use //=
 	$params->{object} ||= Class::Simple->new(%{$params});	# Default to Class::Simple object
