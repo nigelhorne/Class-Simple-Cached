@@ -58,13 +58,17 @@ and that is used.
 
 sub new
 {
-	my $proto = shift;
-	my $class = ref($proto) || $proto;
+	my $class = shift;
 
 	# Use Class::Simple::Cached->new(), not Class::Simple::Cached::new()
 	if(!defined($class)) {
 		carp(__PACKAGE__, ' use ->new() not ::new() to instantiate');
 		return;
+	}
+	if(Scalar::Util::blessed($class)) {
+		my $params = Params::Get::get_params(undef, @_) || {};
+		# clone the given object
+		return bless { %{$class}, %{$params} }, ref($class);
 	}
 
 	my $params = Params::Get::get_params('cache', @_) || {};
