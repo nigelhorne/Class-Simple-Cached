@@ -1,6 +1,6 @@
 Revision history for Class::Simple::Cached
 
-0.06
+0.06	Sat Apr  5 08:20:10 EDT 2025
 	Use Test::DescribeMe to simplify tests
 	Use Test::Needs
 	Use gtar to create a distribution on Macs
