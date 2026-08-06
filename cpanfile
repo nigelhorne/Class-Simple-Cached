@@ -6,6 +6,7 @@ requires 'Carp';
 requires 'Class::Simple';
 requires 'Params::Get', '0.15';
 requires 'Scalar::Util';
+requires 'Sub::Protected';
 
 on 'test' => sub {
 	requires 'CHI';

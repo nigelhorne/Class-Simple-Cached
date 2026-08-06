@@ -8,6 +8,7 @@ use Carp ();
 use Class::Simple;
 use Params::Get 0.15;
 use Scalar::Util ();
+use Sub::Protected;
 
 # Stored in the cache to distinguish "the object returned undef" from
 # "this key has never been cached".  Must never be a legitimate return value.
@@ -156,7 +157,7 @@ sub new
 
 	# When called on a blessed instance, return a shallow clone
 	if(Scalar::Util::blessed($class)) {
-		my $params = Params::Get::get_params(undef, @_) || {};
+		my $params = Params::Get::get_params(undef, \@_) || {};
 		return bless { %{$class}, %{$params} }, ref($class);
 	}
 
@@ -308,6 +309,26 @@ sub DESTROY
 	$cache->purge();
 }
 
+# _cache_get / _cache_set — unified read/write; hides hash-ref vs. CHI dispatch
+# so the rest of the code never needs to branch on ref($cache).
+sub :Protected _cache_get
+{
+	my ($self, $key) = @_;
+	my $cache = $self->{'cache'};
+	return ref($cache) eq 'HASH' ? $cache->{$key} : $cache->get($key);
+}
+
+sub :Protected _cache_set
+{
+	my ($self, $key, $val) = @_;
+	my $cache = $self->{'cache'};
+	if(ref($cache) eq 'HASH') {
+		$cache->{$key} = $val;
+	} else {
+		$cache->set($key, $val, 'never');
+	}
+}
+
 =head2 AUTOLOAD (getter/setter proxy)
 
 Intercepts every method call that is not explicitly defined, proxying it to
@@ -403,21 +424,13 @@ sub AUTOLOAD
 	our $AUTOLOAD;
 	my ($param) = $AUTOLOAD =~ /::(\w+)$/;
 
-	my $self  = shift;
-	my $cache = $self->{'cache'};
+	my $self   = shift;
+	my $key    = ref($self) . ":$param";
+	my $object = $self->{'object'};
 
 	# Getter path ─────────────────────────────────────────────────────────────
 	if(scalar(@_) == 0) {
-		my $key = ref($self) . ":$param";
-		my $object = $self->{'object'};
-
-		# Probe the cache
-		my $rc;
-		if(ref($cache) eq 'HASH') {
-			$rc = $cache->{$key};
-		} else {
-			$rc = $cache->get($key);
-		}
+		my $rc = $self->_cache_get($key);
 
 		# Truthiness check: falsy-but-defined values (0, '') are treated as cache
 		# misses so the object is re-invoked every call.  This is a known
@@ -438,67 +451,29 @@ sub AUTOLOAD
 		if(wantarray) {
 			my @result = $object->$param();
 			return unless scalar(@result);	# empty list: don't cache, return ()
-			if(ref($cache) eq 'HASH') {
-				$cache->{$key} = \@result;
-			} else {
-				$cache->set($key, \@result, 'never');
-			}
+			$self->_cache_set($key, \@result);
 			return @result;
 		}
 
-		# Scalar / void context
+		# Scalar / void context: cache the value (or the sentinel for undef)
 		my $val = $object->$param();
-		if(defined($val)) {
-			if(ref($cache) eq 'HASH') {
-				$cache->{$key} = $val;
-			} else {
-				$cache->set($key, $val, 'never');
-			}
-			return $val;
-		}
-
-		# Object returned undef — store sentinel so we don't re-call next time
-		if(ref($cache) eq 'HASH') {
-			$cache->{$key} = UNDEF_SENTINEL;
-		} else {
-			$cache->set($key, UNDEF_SENTINEL, 'never');
-		}
-		return;
+		$self->_cache_set($key, defined($val) ? $val : UNDEF_SENTINEL);
+		return $val;
 	}
 
-	# Setter path ─────────────────────────────────────────────────────────────
-	my $key    = ref($self) . ":$param";
-	my $object = $self->{'object'};
-
+	# Setter path — array ─────────────────────────────────────────────────────
 	if(scalar(@_) > 1) {
-		# Array setter: pass the list as an arrayref; the wrapped object stores it
+		# Pass the list as an arrayref; the wrapped object stores it
 		my $val = $object->$param(\@_);
-		if(defined($val)) {
-			if(ref($cache) eq 'HASH') {
-				$cache->{$key} = $val;
-			} else {
-				$cache->set($key, $val, 'never');
-			}
-			return @{$val};
-		}
-		# Object returned undef for this array set
-		if(ref($cache) eq 'HASH') {
-			$cache->{$key} = UNDEF_SENTINEL;
-		} else {
-			$cache->set($key, UNDEF_SENTINEL, 'never');
-		}
-		return;
+		$self->_cache_set($key, defined($val) ? $val : UNDEF_SENTINEL);
+		return defined($val) ? @{$val} : ();
 	}
 
-	# Scalar setter
+	# Setter path — scalar ────────────────────────────────────────────────────
+	# CHI's set() returns the cache object, not the stored value;
+	# capture the value before the set call and return it directly.
 	my $val = $object->$param($_[0]);
-	if(ref($cache) eq 'HASH') {
-		$cache->{$key} = defined($val) ? $val : UNDEF_SENTINEL;
-	} else {
-		# CHI's set() returns the cache object, not the stored value;
-		# capture the value before the set call and return it directly
-		$cache->set($key, defined($val) ? $val : UNDEF_SENTINEL, 'never');
-	}
+	$self->_cache_set($key, defined($val) ? $val : UNDEF_SENTINEL);
 	return $val;
 }
 
@@ -553,7 +528,15 @@ L<https://github.com/nigelhorne/Class-Simple-Cached/issues>.
 
 L<Class::Simple>, L<CHI>, L<Class::Simple::Readonly::Cached>
 
+=over 4
+
+=item * L<Test Dashboard|https://nigelhorne.github.io/Class-Simple-Cached/coverage/>
+
+=back
+
 =head1 SUPPORT
+
+This module is provided as-is without any warranty.
 
 You can find documentation for this module with the perldoc command:
 

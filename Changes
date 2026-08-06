@@ -1,6 +1,11 @@
 Revision history for Class::Simple::Cached
 
 0.07
+	[ Refactoring ]
+	- Extract _cache_get() and _cache_set() private helpers to eliminate 4x repeated
+	  hash-ref vs. CHI dispatch conditional in AUTOLOAD
+	- Hoist $key and $object before the getter/setter branch in AUTOLOAD
+	- Consolidate array-setter undef path: remove duplicated _cache_set calls
 	[ Bug Fixes ]
 	- Fix t/carp.t failure: new() now calls Carp::croak (not Params::Get's Carp::confess) when called with no arguments
 	  Fixes https://github.com/nigelhorne/Class-Simple-Cached/issues/7

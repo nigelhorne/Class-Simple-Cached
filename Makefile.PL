@@ -25,7 +25,8 @@ WriteMakefile(
 		'Carp' => 0,
 		'Class::Simple' => 0,
 		'Params::Get' => 0.15,
-		'Scalar::Util' => 0
+		'Scalar::Util' => 0,
+		'Sub::Protected' => 0
 	}, TEST_REQUIRES => {
 		'CHI' => 0,
 		'Class::Simple' => 0,

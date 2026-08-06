@@ -299,7 +299,11 @@ Please report bugs and feature requests at
 
 [Class::Simple](https://metacpan.org/pod/Class%3A%3ASimple), [CHI](https://metacpan.org/pod/CHI), [Class::Simple::Readonly::Cached](https://metacpan.org/pod/Class%3A%3ASimple%3A%3AReadonly%3A%3ACached)
 
+- [Test Dashboard](https://nigelhorne.github.io/Class-Simple-Cached/coverage/)
+
 # SUPPORT
+
+This module is provided as-is without any warranty.
 
 You can find documentation for this module with the perldoc command:
 
