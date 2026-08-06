@@ -53,6 +53,14 @@ Revision history for Class::Simple::Cached
 	- t/manifest.t: replace capturing groups with non-capturing (?:...) in filter regex;
 	  replace $ anchor with \z; modernise to Test::DescribeMe + Test::Needs
 	[ Tests ]
+	- t/unit.t: new black-box API contract test suite — 35 subtests proving every
+	  documented message, return state, and side-effect from the POD; includes an
+	  API ledger that asserts 100% coverage of documented states, global-state
+	  integrity checks ($@, $_, alarm()), and Test::Mockingbird spy verification
+	  of the Carp::carp signalling path; uses Test::Returns for return-type schema
+	  validation and tests all four documented new() error messages, all getter
+	  cache-hit branches, all cache-miss branches, all setter paths, and all isa()
+	  and can() paths
 	- t/function.t: new white-box function test suite — 42 subtests covering
 	  every code path in new() (8 paths), can(), isa(), DESTROY() (4 paths),
 	  _cache_get() and _cache_set() (hash and CHI backends each), and AUTOLOAD
