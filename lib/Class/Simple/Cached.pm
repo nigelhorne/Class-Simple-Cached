@@ -14,6 +14,10 @@ use Sub::Protected;
 # "this key has never been cached".  Must never be a legitimate return value.
 use constant UNDEF_SENTINEL => __PACKAGE__ . '>UNDEF<';
 
+# Evaluated once at compile time so DESTROY never pays a string comparison
+# on every object teardown just to decide whether ${^GLOBAL_PHASE} exists.
+use constant _GLOBAL_PHASE_AVAILABLE => defined($^V) && ($^V ge 'v5.14.0');
+
 =head1 NAME
 
 Class::Simple::Cached - cache getter results for any get/set object
@@ -158,7 +162,12 @@ sub new
 	# When called on a blessed instance, return a shallow clone
 	if(Scalar::Util::blessed($class)) {
 		my $params = Params::Get::get_params(undef, \@_) || {};
-		return bless { %{$class}, %{$params} }, ref($class);
+		my %merged = (%{$class}, %{$params});
+		# If a new cache was supplied recalculate the precomputed type flag
+		if(exists $params->{'cache'}) {
+			$merged{'_is_hash_cache'} = ref($params->{'cache'}) eq 'HASH';
+		}
+		return bless \%merged, ref($class);
 	}
 
 	# Require at least one argument so Params::Get's confess is never reached;
@@ -171,6 +180,11 @@ sub new
 
 	# Default the wrapped object to a bare Class::Simple instance
 	$params->{'object'} ||= Class::Simple->new();
+
+	# Precompute per-instance fields so AUTOLOAD (hot path) avoids ref() and
+	# string concatenation on every call.
+	$params->{'_is_hash_cache'} = ref($params->{'cache'}) eq 'HASH';
+	$params->{'_cache_prefix'}  = "$class:";
 
 	if(Scalar::Util::blessed($params->{'cache'})) {
 		# Verify the cache object speaks the required interface
@@ -294,17 +308,15 @@ sub DESTROY
 
 	my $cache = $self->{'cache'} or return;
 
-	if(ref($cache) eq 'HASH') {
+	if($self->{'_is_hash_cache'}) {
 		# Remove only this class's keys to avoid stomping on siblings sharing the hash
-		my $class = ref($self);
-		delete $cache->{$_} for grep { index($_, "$class:") == 0 } keys %{$cache};
+		my $prefix = $self->{'_cache_prefix'};
+		delete $cache->{$_} for grep { index($_, $prefix) == 0 } keys %{$cache};
 		return;
 	}
 
 	# Skip purge during global destruction to avoid order-of-destruction crashes
-	if(defined($^V) && ($^V ge 'v5.14.0')) {
-		return if ${^GLOBAL_PHASE} eq 'DESTRUCT';
-	}
+	return if _GLOBAL_PHASE_AVAILABLE && ${^GLOBAL_PHASE} eq 'DESTRUCT';
 
 	$cache->purge();
 }
@@ -315,14 +327,14 @@ sub _cache_get :Protected
 {
 	my ($self, $key) = @_;
 	my $cache = $self->{'cache'};
-	return ref($cache) eq 'HASH' ? $cache->{$key} : $cache->get($key);
+	return $self->{'_is_hash_cache'} ? $cache->{$key} : $cache->get($key);
 }
 
 sub _cache_set :Protected
 {
 	my ($self, $key, $val) = @_;
 	my $cache = $self->{'cache'};
-	if(ref($cache) eq 'HASH') {
+	if($self->{'_is_hash_cache'}) {
 		$cache->{$key} = $val;
 	} else {
 		$cache->set($key, $val, 'never');
@@ -422,10 +434,13 @@ The value returned by the wrapped object (or the cached copy thereof).
 sub AUTOLOAD
 {
 	our $AUTOLOAD;
-	my ($param) = $AUTOLOAD =~ /::(\w+)\z/;
+	# rindex+substr avoids regex engine startup on every method dispatch
+	my $param = substr($AUTOLOAD, rindex($AUTOLOAD, '::') + 2);
 
-	my $self   = shift;
-	my $key    = ref($self) . ":$param";
+	my $self = shift;
+	# _cache_prefix is precomputed at new() time (= ref($self) . ":") to avoid
+	# calling ref() and doing string concat on every AUTOLOAD invocation.
+	my $key  = $self->{'_cache_prefix'} . $param;
 	my $object = $self->{'object'};
 
 	# Getter path ─────────────────────────────────────────────────────────────
