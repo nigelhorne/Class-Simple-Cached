@@ -71,6 +71,10 @@ sub new
 		return bless { %{$class}, %{$params} }, ref($class);
 	}
 
+	if(scalar(@_) == 0) {
+		Carp::croak('Usage: ', $class, '->new(cache => $cache)');
+	}
+
 	my $params = Params::Get::get_params('cache', @_) || {};
 
 	# Later Perls can use //=
