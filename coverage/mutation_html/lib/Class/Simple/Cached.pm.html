@@ -741,7 +741,7 @@ is( func(INPUT), EXPECTED, &#39;Verify correct return value&#39; );
 </span><span class="">  422: sub AUTOLOAD
 </span><span class="">  423: {
 </span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">424 → 432 → 465</span></span>  424: 	our $AUTOLOAD;
-</span><span class="">  425: 	my ($param) = $AUTOLOAD =~ /::(\w+)$/;
+</span><span class="">  425: 	my ($param) = $AUTOLOAD =~ /::(\w+)\z/;
 </span><span class="">  426: 
 </span><span class="">  427: 	my $self   = shift;
 </span><span class="">  428: 	my $key    = ref($self) . &quot;:$param&quot;;
