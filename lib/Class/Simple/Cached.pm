@@ -422,7 +422,7 @@ The value returned by the wrapped object (or the cached copy thereof).
 sub AUTOLOAD
 {
 	our $AUTOLOAD;
-	my ($param) = $AUTOLOAD =~ /::(\w+)$/;
+	my ($param) = $AUTOLOAD =~ /::(\w+)\z/;
 
 	my $self   = shift;
 	my $key    = ref($self) . ":$param";
