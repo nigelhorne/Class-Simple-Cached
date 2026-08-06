@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp;
 use Class::Simple;
-use Params::Get;
+use Params::Get 0.15;
 use Scalar::Util;
 
 my @ISA = ('Class::Simple');

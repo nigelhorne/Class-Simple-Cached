@@ -18,13 +18,13 @@ WriteMakefile(
 	ABSTRACT_FROM   => 'lib/Class/Simple/Cached.pm',
 	((defined($ExtUtils::MakeMaker::VERSION) &&
 	 ($ExtUtils::MakeMaker::VERSION >= 6.3002))
-	  ? ('LICENSE'=> 'GPL')
+	  ? ('LICENSE'=> 'gpl_2')
 	  : ()),
 	PL_FILES	=> {},
 	PREREQ_PM => {
 		'Carp' => 0,
 		'Class::Simple' => 0,
-		'Params::Get' => 0,
+		'Params::Get' => 0.15,
 		'Scalar::Util' => 0
 	}, TEST_REQUIRES => {
 		'CHI' => 0,

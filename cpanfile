@@ -4,7 +4,7 @@ requires 'perl', '5.6.2';
 
 requires 'Carp';
 requires 'Class::Simple';
-requires 'Params::Get';
+requires 'Params::Get', '0.15';
 requires 'Scalar::Util';
 
 on 'test' => sub {
