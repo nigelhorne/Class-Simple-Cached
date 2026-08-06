@@ -134,7 +134,7 @@
 	<a href="https://github.com/nigelhorne/Class-Simple-Cached">
 		<img src="https://img.shields.io/github/stars/nigelhorne/Class-Simple-Cached?style=social" alt="GitHub stars">
 	</a>
-	<img src="https://img.shields.io/badge/coverage-81%25-yellow" alt="Coverage badge">
+	<img src="https://img.shields.io/badge/coverage-89%25-yellow" alt="Coverage badge">
 </div>
 <h1>Class::Simple::Cached</h1><h2>Coverage Report</h2>
 <table data-sort-col="0" data-sort-order="asc">
@@ -153,11 +153,306 @@
 
 <tbody>
 
-<tr class="med"><td><a href="blib-lib-Class-Simple-Cached-pm.html" title="View coverage line by line" target="_blank">lib/Class/Simple/Cached.pm</a> <a href="https://github.com/nigelhorne/Class-Simple-Cached/blob/0d50cbffc02c615297b84354b2e400122a3ab123/lib/Class/Simple/Cached.pm" class="icon-link" title="View source on GitHub">&#128269;</a><canvas class="sparkline" width="80" height="20" data-points=""></canvas></td><td>88.0</td><td>76.6</td><td>52.0</td><td>100.0</td><td><span class="coverage-badge badge-warn" title="Moderate coverage">81.1%</span></td><td class="neutral" title="No previous data">&#9679;</td></tr>
-<tr class="summary-row nosort"><td colspan="2"><strong>Summary</strong></td><td colspan="2">1 files</td><td colspan="3">Avg: 81%, Low: 0</td></tr>
-<tr class="high nosort"><td><strong>Total</strong></td><td>88.0</td><td>76.6</td><td>52.0</td><td>100.0</td><td colspan="2"><strong>81.1</strong></td></tr>
+<tr class="med"><td><a href="blib-lib-Class-Simple-Cached-pm.html" title="View coverage line by line" target="_blank">lib/Class/Simple/Cached.pm</a> <a href="https://github.com/nigelhorne/Class-Simple-Cached/blob/de347f95aeafd5821c1de445f7e5c2b8ffed2fa2/lib/Class/Simple/Cached.pm" class="icon-link" title="View source on GitHub">&#128269;</a><canvas class="sparkline" width="80" height="20" data-points="81.1"></canvas></td><td>98.3</td><td>84.4</td><td>56.0</td><td>100.0</td><td><span class="coverage-badge badge-warn" title="Moderate coverage">89.4%</span></td><td class="neutral" title="No previous data">&#9679;</td></tr>
+<tr class="summary-row nosort"><td colspan="2"><strong>Summary</strong></td><td colspan="2">1 files</td><td colspan="3">Avg: 89%, Low: 0</td></tr>
+<tr class="high nosort"><td><strong>Total</strong></td><td>98.3</td><td>84.4</td><td>56.0</td><td>100.0</td><td colspan="2"><strong>89.4</strong></td></tr>
 </tbody></table>
-<p><i>No history to show coverage trend</i></p>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1em;">
+	<div>
+		<h2>Coverage Trend</h2>
+		<label>
+			<input type="checkbox" id="toggleTrend" checked>
+			Show regression trend
+		</label>
+		<div>
+		</div>
+	</div>
+	<div id="zoomControls" style="margin-top:8px;">
+		<input type="button" value="Refresh" onClick="refresh(this)">
+		<button id="resetZoomBtn" type="button">Reset Zoom</button>
+	</div>
+</div>
+<canvas id="coverageTrend" width="600" height="300"></canvas>
+<!-- Zoom controls for the trend chart -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Add chartjs-plugin-zoom (required for wheel/pinch/drag zoom & pan) -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom\@2.1.1/dist/chartjs-plugin-zoom.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+<script>
+function linearRegression(data) {
+	const xs = data.map(p => new Date(p.x).getTime());
+	const ys = data.map(p => p.y);
+	const n = xs.length;
+
+	const sumX = xs.reduce((a, b) => a + b, 0);
+	const sumY = ys.reduce((a, b) => a + b, 0);
+	const sumXY = xs.reduce((acc, val, i) => acc + val * ys[i], 0);
+	const sumX2 = xs.reduce((acc, val) => acc + val * val, 0);
+
+	if(n < 2 || (n * sumX2 - sumX * sumX) === 0) {
+		return [];
+	}
+	const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+	const intercept = (sumY - slope * sumX) / n;
+
+	return xs.map(x => ({
+		x: new Date(x).toISOString(),
+		y: slope * x + intercept
+	}));
+}
+
+
+const dataPoints = [ { x: "2026-08-06T09:02:47-04:00", y: 81.1059907834101, delta: 0, url: "https://github.com/nigelhorne/Class-Simple-Cached/commit/0d50cbffc02c615297b84354b2e400122a3ab123", label: "2026-08-06T09:02:47-04:00", pointBackgroundColor: "gray", comment: "Latest ATG dashboard code" } ];
+const regressionPoints = linearRegression(dataPoints);
+// Try to register the zoom plugin (handles different UMD builds)
+(function registerZoomPlugin(){
+	try {
+		const candidates = ['chartjsPluginZoom','ChartZoom','zoomPlugin','chartjs_plugin_zoom','ChartjsPluginZoom','chartjsPluginZoom'];
+		for(const name of candidates) {
+			if(window[name]) {
+				try { Chart.register(window[name]); console.log('Registered zoom plugin:', name); return; } catch(e) { console.warn('zoom register failed for', name, e); }
+			}
+		}
+		// Some CDN builds auto-register the plugin; if nothing found that's OK (feature disabled).
+	} catch(e) {
+		console.warn('registerZoomPlugin error', e);
+	}
+})();
+const ctx = document.getElementById('coverageTrend').getContext('2d');
+const chart = new Chart(ctx, {
+	type: 'line',
+	data: {
+		datasets: [{
+			label: 'Total Coverage (%)',
+			data: dataPoints,
+			borderColor: 'green',
+			backgroundColor: 'rgba(0,128,0,0.1)',
+			pointRadius: 5,
+			pointHoverRadius: 7,
+			pointStyle: 'circle',
+			fill: false,
+			tension: 0.3,
+			pointBackgroundColor: function(context) {
+				return context.raw.pointBackgroundColor || 'gray';
+			}
+		}, {
+			label: 'Regression Line',
+			data: regressionPoints,
+			borderColor: 'blue',
+			borderDash: [5, 5],
+			pointRadius: 0,
+			fill: false,
+			tension: 0.0
+		}]
+	}, options: {
+		scales: {
+			x: {
+				type: 'time',
+				time: {
+					tooltipFormat: 'MMM d, yyyy HH:mm:ss',
+					unit: 'day'
+				},
+				title: { display: true, text: 'Commit Date' }
+			},
+			y: { beginAtZero: true, max: 100, title: { display: true, text: 'Coverage (%)' } }
+		}, plugins: {
+			legend: {
+				display: true,
+				position: 'top', // You can also use 'bottom', 'left', or 'right'
+				labels: {
+					boxWidth: 12,
+					padding: 10,
+					font: {
+						size: 12,
+						weight: 'bold'
+					}
+				}
+			}, tooltip: {
+				callbacks: {
+					label: function(context) {
+						const raw = context.raw;
+						const coverage = raw.y.toFixed(1);
+						const delta = raw.delta?.toFixed(1) ?? '0.0';
+						const sign = delta > 0 ? '+' : delta < 0 ? '-' : '±';
+						// const baseLine = `${raw.label}: ${coverage}% (${sign}${Math.abs(delta)}%)`;
+						const baseLine = `${coverage}% (${sign}${Math.abs(delta)}%)`;
+						const commentLine = raw.comment ? raw.comment : null;
+						return commentLine ? [baseLine, commentLine] : [baseLine];
+					}
+				}
+			} , zoom: {	// Enable zoom & pan on the x-axis for the trend chart
+				pan: {
+					enabled: true,
+					mode: 'x'
+				}, zoom: {
+					wheel: {
+						enabled: true
+					}, pinch: {
+						enabled: true
+					}, mode: 'x'
+				}
+			}
+		}, onClick: (e) => {
+			const points = chart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true);
+			if(points.length) {
+				const url = chart.data.datasets[0].data[points[0].index].url;
+				window.open(url, '_blank');
+			}
+		}
+	}
+});
+
+document.getElementById('toggleTrend').addEventListener('change', function(e) {
+	const show = e.target.checked;
+	const trendDataset = chart.data.datasets.find(ds => ds.label === 'Regression Line');
+	trendDataset.hidden = !show;
+	chart.update();
+});
+
+// Reset Zoom button handler (calls plugin API if available)
+const resetBtn = document.getElementById('resetZoomBtn');
+if(resetBtn) {
+	resetBtn.addEventListener('click', function() {
+		try {
+			if(chart && typeof chart.resetZoom === 'function') {
+				chart.resetZoom();
+			} else {
+				console.warn('resetZoom not available; zoom plugin may not be registered.');
+			}
+		} catch (e) {
+			console.warn('resetZoom call failed', e);
+		}
+	});
+}
+
+function sortTable(th, colIndex) {
+	const table = th.closest("table");
+	if(!table || !table.tBodies.length) return;
+
+	const tbody = table.tBodies[0];
+	const rows = Array.from(tbody.rows);
+
+	const prevCol = table.getAttribute("data-sort-col");
+	const prevOrder = table.getAttribute("data-sort-order") || "desc";
+	const asc = (prevCol != colIndex) ? true : (prevOrder === "desc");
+
+	const isNumeric = colIndex === 0; // Date column
+
+	const normalRows = rows.filter(r => !r.classList.contains("nosort"));
+	const fixedRows = rows.filter(r => r.classList.contains("nosort"));
+
+	normalRows.sort((a, b) => {
+		let x = a.cells[colIndex]?.innerText.trim() || "";
+		let y = b.cells[colIndex]?.innerText.trim() || "";
+
+		if(isNumeric) {
+			x = Date.parse(x) || 0;
+			y = Date.parse(y) || 0;
+		} else {
+			x = x.toLowerCase();
+			y = y.toLowerCase();
+		}
+
+		if(x < y) return asc ? -1 : 1;
+		if(x > y) return asc ? 1 : -1;
+		return 0;
+	});
+
+	normalRows.forEach(r => tbody.appendChild(r));
+	fixedRows.forEach(r => tbody.appendChild(r));
+
+	// Update arrows
+	const headers = table.tHead.rows[0].cells;
+	for(let i = 0; i < headers.length; i++) {
+		const arrow = headers[i].querySelector(".arrow");
+		if(!arrow) continue;
+
+		if(i === colIndex) {
+			arrow.textContent = asc ? "▲" : "▼";
+			arrow.classList.add("active");
+		} else {
+			arrow.textContent = "▲";
+			arrow.classList.remove("active");
+		}
+	}
+
+	table.setAttribute("data-sort-col", colIndex);
+	table.setAttribute("data-sort-order", asc ? "asc" : "desc");
+}
+
+
+// Initial display.
+// The table has been set up sorted in ascending order on the filename; reflect that in the GUI
+document.addEventListener("DOMContentLoaded", () => {
+	const table = document.querySelector("table");
+	if(!table) return;
+
+	const headers = table.tHead.rows[0].cells;
+	for(let i = 0; i < headers.length; i++) {
+		const arrow = headers[i].querySelector(".arrow");
+		if(!arrow) continue;
+
+		if(i === 0) {
+			arrow.textContent = "▲";
+			arrow.classList.add("active");
+		} else {
+			arrow.textContent = "▲";
+			arrow.classList.remove("active");
+		}
+	}
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+	document.querySelectorAll("canvas.sparkline").forEach(canvas => {
+		const raw = canvas.getAttribute("data-points");
+		if(!raw) return;
+		const points = raw.split(",").map(v => parseFloat(v));
+
+		new Chart(canvas.getContext("2d"), {
+			type: 'line',
+			data: {
+				labels: points.map((_, i) => i+1),
+				datasets: [{
+					data: points,
+					borderColor: points.length > 1 && points[points.length-1] >= points[0] ? "green" : "red",
+					borderWidth: 1,
+					fill: false,
+					tension: 0.3,
+					pointRadius: 0
+				}]
+			}, options: {
+				responsive: false,
+				maintainAspectRatio: false,
+				elements: { line: { borderJoinStyle: 'round' } },
+				plugins: {
+					legend: { display: false },
+					tooltip: { enabled: false },
+					zoom: {	// Enable zoom and pan
+						pan: {
+							enabled: true,
+							mode: 'x',
+						}, zoom: {
+							wheel: {
+								enabled: true,
+							},
+							pinch: {
+								enabled: true
+							},
+							mode: 'x',
+						}
+					}
+				}, scales: { x: { display: false }, y: { display: false } }
+			}
+		});
+	});
+});
+
+function refresh(){
+	window.location.reload("Refresh")
+}
+</script>
+
+<p><center>Use mouse wheel or pinch to zoom; drag to pan</center></p>
 <p>No issues active on <a href="https://rt.cpan.org/Public/Dist/Display.html?Name=Class-Simple-Cached">RT</a></p>
 <h2>CPAN Testers Failures for Class-Simple-Cached 0.06</h2>
 <script>
@@ -247,50 +542,50 @@ document.addEventListener("DOMContentLoaded", () => {
 </thead>
 <tbody>
 
-<tr class="cpan-fail"><td>2025-06-07T19:53:00Z</td><td>linux</td><td>5.18.4</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/147075f6-43d9-11f0-9224-9054ccab14db" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2025-06-07T17:47:00Z</td><td>linux</td><td>5.26.0</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/85b6664c-43c7-11f0-a978-cb5190dd687a" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-07-09T20:40:00Z</td><td>linux</td><td>5.40.0</td><td>Slaven Rezi&#x107;</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/76c13156-7bd6-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2025-09-18T17:46:00Z</td><td>linux</td><td>5.43.2</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/7755b350-94b7-11f0-a8dd-da7ef92ee923" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2025-06-24T22:02:00Z</td><td>MSWin32</td><td>5.32.1</td><td>twata</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/144bd6fc-71dc-1014-bd2c-c3fdce55203a" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-07-09T20:47:00Z</td><td>linux</td><td>5.43.11</td><td>Slaven Rezi&#x107;</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/5cdb63fa-7bd7-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2025-06-06T06:40:00Z</td><td>linux</td><td>5.41.13</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/12626776-42a1-11f0-88c6-987179d9cd71" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-07-09T20:48:00Z</td><td>linux</td><td>5.38.5</td><td>Slaven Rezi&#x107;</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/80c875e6-7bd7-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-08-06T12:04:00Z</td><td>darwin</td><td>5.38.0</td><td>Nigel Horne</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/ed504cc6-918e-11f1-8fc8-9413de0f4a48" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-07-09T20:41:00Z</td><td>linux</td><td>5.36.3</td><td>Slaven Rezi&#x107;</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/9c667d9e-7bd6-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-07-09T20:38:00Z</td><td>linux</td><td>5.38.2</td><td>Slaven Rezi&#x107;</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/2280b792-7bd6-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2025-06-06T13:33:00Z</td><td>linux</td><td>5.40.2</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/d35f0e14-42da-11f0-ad12-85b20556e57f" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2025-06-21T00:58:00Z</td><td>MSWin32</td><td>5.40.2</td><td>twata</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/02df4d64-711e-1014-b190-e1d8f947e5e3" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-07-09T20:49:00Z</td><td>linux</td><td>5.36.3</td><td>Slaven Rezi&#x107;</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/a18aff9c-7bd7-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-07-09T20:46:00Z</td><td>linux</td><td>5.42.0</td><td>Slaven Rezi&#x107;</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/48eaeaf0-7bd7-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
 <tr class="cpan-fail"><td>2026-07-09T20:44:00Z</td><td>freebsd</td><td>5.40.4</td><td>Slaven Rezi&#x107;</td><td></td>
 				<td><a href="https://www.cpantesters.org/cpan/report/063a4584-7bd7-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2026-07-09T20:47:00Z</td><td>linux</td><td>5.44.0 RC1</td><td>Slaven Rezi&#x107;</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/72586322-7bd7-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
 <tr class="cpan-fail"><td>2026-07-09T20:43:00Z</td><td>freebsd</td><td>5.38.5</td><td>Slaven Rezi&#x107;</td><td></td>
 				<td><a href="https://www.cpantesters.org/cpan/report/e2a90b14-7bd6-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
-<tr class="cpan-fail"><td>2025-09-14T02:01:00Z</td><td>linux</td><td>5.43.2</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
-				<td><a href="https://www.cpantesters.org/cpan/report/aa2f64bc-910e-11f0-97c2-d487545d78a1" target="_blank">View</a></td><td></td></tr>
+<tr class="cpan-fail"><td>2025-06-06T13:33:00Z</td><td>linux</td><td>5.40.2</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/d35f0e14-42da-11f0-ad12-85b20556e57f" target="_blank">View</a></td><td></td></tr>
+<tr class="cpan-fail"><td>2026-08-06T12:04:00Z</td><td>darwin</td><td>5.38.0</td><td>Nigel Horne</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/ed504cc6-918e-11f1-8fc8-9413de0f4a48" target="_blank">View</a></td><td></td></tr>
+<tr class="cpan-fail"><td>2025-06-07T17:47:00Z</td><td>linux</td><td>5.26.0</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/85b6664c-43c7-11f0-a978-cb5190dd687a" target="_blank">View</a></td><td></td></tr>
+<tr class="cpan-fail"><td>2026-07-09T20:47:00Z</td><td>linux</td><td>5.43.11</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/5cdb63fa-7bd7-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
+<tr class="cpan-fail"><td>2026-07-09T20:49:00Z</td><td>linux</td><td>5.36.3</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/a18aff9c-7bd7-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
+<tr class="cpan-fail"><td>2026-07-09T20:41:00Z</td><td>linux</td><td>5.36.3</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/9c667d9e-7bd6-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
 <tr class="cpan-fail"><td>2026-07-09T20:48:00Z</td><td>linux</td><td>5.40.3</td><td>Slaven Rezi&#x107;</td><td></td>
 				<td><a href="https://www.cpantesters.org/cpan/report/8f6353be-7bd7-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
+<tr class="cpan-fail"><td>2025-09-14T02:01:00Z</td><td>linux</td><td>5.43.2</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/aa2f64bc-910e-11f0-97c2-d487545d78a1" target="_blank">View</a></td><td></td></tr>
+<tr class="cpan-fail"><td>2025-06-24T22:02:00Z</td><td>MSWin32</td><td>5.32.1</td><td>twata</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/144bd6fc-71dc-1014-bd2c-c3fdce55203a" target="_blank">View</a></td><td></td></tr>
 <tr class="cpan-fail"><td>2026-07-09T20:45:00Z</td><td>linux</td><td>5.32.1</td><td>Slaven Rezi&#x107;</td><td></td>
 				<td><a href="https://www.cpantesters.org/cpan/report/1dde7d18-7bd7-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
+<tr class="cpan-fail"><td>2025-06-07T19:53:00Z</td><td>linux</td><td>5.18.4</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/147075f6-43d9-11f0-9224-9054ccab14db" target="_blank">View</a></td><td></td></tr>
+<tr class="cpan-fail"><td>2026-07-09T20:47:00Z</td><td>linux</td><td>5.44.0 RC1</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/72586322-7bd7-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
+<tr class="cpan-fail"><td>2026-07-09T20:48:00Z</td><td>linux</td><td>5.38.5</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/80c875e6-7bd7-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
 <tr class="cpan-fail"><td>2026-07-09T20:43:00Z</td><td>freebsd</td><td>5.30.3</td><td>Slaven Rezi&#x107;</td><td></td>
 				<td><a href="https://www.cpantesters.org/cpan/report/c6902d04-7bd6-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
+<tr class="cpan-fail"><td>2026-07-09T20:46:00Z</td><td>linux</td><td>5.42.0</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/48eaeaf0-7bd7-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
+<tr class="cpan-fail"><td>2026-07-09T20:40:00Z</td><td>linux</td><td>5.40.0</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/76c13156-7bd6-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
+<tr class="cpan-fail"><td>2026-07-09T20:38:00Z</td><td>linux</td><td>5.38.2</td><td>Slaven Rezi&#x107;</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/2280b792-7bd6-11f1-a0f2-6ee66d8775ea" target="_blank">View</a></td><td></td></tr>
+<tr class="cpan-fail"><td>2025-06-21T00:58:00Z</td><td>MSWin32</td><td>5.40.2</td><td>twata</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/02df4d64-711e-1014-b190-e1d8f947e5e3" target="_blank">View</a></td><td></td></tr>
+<tr class="cpan-fail"><td>2025-09-18T17:46:00Z</td><td>linux</td><td>5.43.2</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/7755b350-94b7-11f0-a8dd-da7ef92ee923" target="_blank">View</a></td><td></td></tr>
+<tr class="cpan-fail"><td>2025-06-06T06:40:00Z</td><td>linux</td><td>5.41.13</td><td>Andreas J. K&ouml;nig (ANDK)</td><td></td>
+				<td><a href="https://www.cpantesters.org/cpan/report/12626776-42a1-11f0-88c6-987179d9cd71" target="_blank">View</a></td><td></td></tr>
 </tbody></table>
 <h2>Mutation Report</h2>
 <h3>Mutation Summary</h3>
@@ -314,17 +609,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <h2>Structural Coverage (Approximate)</h2>
 <div class='summary'>
-Statement Coverage: 88.03% (103 / 117)<br>
-Branch Coverage: 76.56% (49 / 64)<br>
+Statement Coverage: 98.28% (114 / 116)<br>
+Branch Coverage: 84.38% (54 / 64)<br>
 <em>Approximate LCSAJ derived from branch and statement coverage.</em>
 </div>
 <h2>Executive Summary</h2>
 <div class='summary'>
-Tests execute 88.03% of the code. No mutation data available yet — trigger the mutation workflow for fault detection analysis.
+Tests execute 98.28% of the code. No mutation data available yet — trigger the mutation workflow for fault detection analysis.
 </div>
 <footer>
 	<p>Project: <a href="https://github.com/nigelhorne/Class-Simple-Cached">Class-Simple-Cached</a></p>
-	<p><em>Last updated: 2026-08-06 13:06:00 - <a href="https://github.com/nigelhorne/Class-Simple-Cached/commit/0d50cbffc02c615297b84354b2e400122a3ab123">commit <code>0d50cbf</code></a></em></p>
+	<p><em>Last updated: 2026-08-06 14:24:50 - <a href="https://github.com/nigelhorne/Class-Simple-Cached/commit/de347f95aeafd5821c1de445f7e5c2b8ffed2fa2">commit <code>de347f9</code></a></em></p>
 	<p style="float: right; font-size: 0.85em; color: #999;">Powered by <a href="https://metacpan.org/dist/App-Test-Generator">App::Test::Generator 0.44</a></p>
 </footer>
 </body>
