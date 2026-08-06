@@ -1,0 +1,980 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+
+/* --------------------------------------------------
+   CSS Variables (Light Mode Default)
+-------------------------------------------------- */
+
+:root {
+    --bg: #ffffff;
+    --text: #000000;
+    --table-header: #333;
+    --table-header-text: #ffffff;
+
+    --survived-1: #f8d7da;
+    --survived-2: #f5b7b1;
+    --survived-3: #ec7063;
+
+    --killed: #d4edda;
+    --border: #cccccc;
+}
+
+/* --------------------------------------------------
+   Dark Mode Overrides
+-------------------------------------------------- */
+
+html[data-theme='dark'] {
+    --bg: #1e1e1e;
+    --text: #dddddd;
+    --table-header: #222;
+    --table-header-text: #ffffff;
+
+    --survived-1: #5c2b2e;
+    --survived-2: #7b2c2f;
+    --survived-3: #a93226;
+
+    --killed: #1e4620;
+    --border: #555;
+}
+
+/* --------------------------------------------------
+   Global Styles
+-------------------------------------------------- */
+
+body {
+	font-family: sans-serif;
+	background: var(--bg);
+	color: var(--text);
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th {
+    background: var(--table-header);
+    color: var(--table-header-text);
+}
+
+.survived-1 { background-color: var(--survived-1); }
+.survived-2 { background-color: var(--survived-2); }
+.survived-3 { background-color: var(--survived-3); }
+
+.killed { background-color: var(--killed); }
+
+.legend {
+    border: 1px solid #ccc;
+    background: #fafafa;
+    padding: 10px;
+    margin: 15px 0;
+    font-size: 0.9em;
+}
+
+.legend pre {
+    background: #f4f4f4;
+    padding: 5px;
+}
+
+.legend-box {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin: 0 6px 0 20px;
+    vertical-align: middle;
+    border: 1px solid var(--border);
+}
+
+/* White box for non-mutated lines */
+.legend-box.none {
+	background-color: var(--bg);
+}
+
+/* --------------------------------------------------
+   Suggested Test Box Styling
+   Theme-aware and readable in light & dark modes
+-------------------------------------------------- */
+
+.suggested-test {
+    margin-top: 6px;
+    margin-bottom: 12px;
+
+    /* Use theme variables instead of hardcoded colors */
+    background: var(--bg);
+    color: var(--text);
+
+    padding: 8px;
+    border-radius: 4px;
+
+    /* Subtle border for visual separation */
+    border: 1px solid var(--border);
+}
+
+/* Label styling */
+.suggest-label {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+/* Ensure the test code block inherits readable colors */
+.suggested-test pre {
+    background: transparent;   /* Prevent nested dark blocks */
+    color: inherit;            /* Match theme text color */
+    margin: 0;
+    font-family: monospace;
+}
+
+pre { line-height: 1.4; }
+
+pre > details {
+    margin: 0.2em 0;
+}
+
+pre > details:first-child {
+    margin-top: 0;
+}
+
+pre > details:last-child {
+    margin-bottom: 0;
+}
+
+pre details,
+pre summary,
+pre ul,
+pre li {
+    white-space: normal;
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
+}
+
+.nav { margin-bottom: 1em; }
+
+.toggle {
+    float: right;
+    cursor: pointer;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+/* Tooltip container */
+.tooltip {
+	position: relative;
+	cursor: help;
+}
+
+/* Tooltip bubble */
+.tooltip:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 0;
+    top: 100%;
+    background: var(--table-header);
+    color: var(--table-header-text);
+    padding: 6px 10px;
+    white-space: normal;
+    max-width: 300px;
+    min-width: 30ch;
+    font-size: 12px;
+    border-radius: 6px;
+    z-index: 1000;
+    margin-left: 10ch;   /* move tooltip ~10 characters to the right */
+}
+
+.mutant-details {
+	margin-left: 2em;
+	font-size: 0.9em;
+}
+
+/* Indent the list of mutations that displays when expanding by 8 characters */
+pre details.mutant-details ul {
+	padding-left: 8ch;
+	margin: 0.2em 0;
+}
+
+.mutant-details summary {
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.lcsaj-dot {
+    color: #5555ff;
+    font-size: 10px;
+    margin-right: 3px;
+}
+
+.lcsaj-dot-uncovered {
+    color: #cc4444;
+    font-size: 10px;
+    margin-right: 3px;
+}
+
+.lcsaj-tip {
+	position: relative;
+	display: inline-block;
+}
+
+.lcsaj-tip .lcsaj-tip-text {
+	visibility: hidden;
+	background-color: #333;
+	color: #fff;
+	padding: 4px 8px;
+	border-radius: 4px;
+	font-size: 11px;
+	white-space: nowrap;
+	position: fixed;
+	z-index: 9999;
+	pointer-events: none;
+}
+
+.lcsaj-tip:hover .lcsaj-tip-text {
+	visibility: visible;
+}
+
+</style>
+</head>
+<body>
+<button class="toggle" onclick="toggleTheme()">🌙 Toggle Theme</button>
+<h1>lib/Class/Simple/Cached.pm</h1>
+<div class="nav"><a href="../../../../index.html">Index</a>
+</div><div class='summary'>
+<strong>Structural Coverage (Approximate)</strong><p>
+TER1 (Statement): 99.01%<br>
+TER2 (Branch): 86.00%<br>
+TER3 (LCSAJ): 100.0% (10/10)<br>
+Approximate LCSAJ segments: 51<br>
+</div>
+
+    <div class="legend">
+        <h3>LCSAJ Legend</h3>
+
+        <p>
+        <span class="lcsaj-dot">●</span>
+        <b>Covered</b> — this LCSAJ path was executed during testing.
+        </p>
+
+        <p>
+        <span class="lcsaj-dot-uncovered">●</span>
+        <b>Not covered</b> — this LCSAJ path was never executed. These are the paths to focus on.
+        </p>
+
+        <p>
+        Multiple dots on a line indicate that multiple control-flow paths begin at that line.
+        Hovering over any dot shows:
+        </p>
+
+        <pre>
+        start → end → jump
+        </pre>
+
+        <ul>
+        <li><b>start</b> – first line of the linear sequence</li>
+        <li><b>end</b> – last line before control flow changes</li>
+        <li><b>jump</b> – line execution jumps to next</li>
+        </ul>
+
+        <p>
+        Uncovered paths show <b>[NOT COVERED]</b> in the tooltip.
+	</p>
+    </div>
+
+		<div class="legend">
+			<h3>Mutant Testing Legend</h3>
+			<span class="legend-box survived-1"></span> Survived (tests missed this)
+			<span class="legend-box killed"></span> Killed (tests detected this)
+			<span class="legend-box none"></span> No mutation
+		</div>
+	<pre>
+<span class="">    1: package Class::Simple::Cached;
+</span><span class="">    2: 
+</span><span class="">    3: use strict;
+</span><span class="">    4: use warnings;
+</span><span class="">    5: use autodie qw(:all);
+</span><span class="">    6: 
+</span><span class="">    7: use Carp ();
+</span><span class="">    8: use Class::Simple;
+</span><span class="">    9: use Params::Get 0.15;
+</span><span class="">   10: use Scalar::Util ();
+</span><span class="">   11: use Sub::Protected;
+</span><span class="">   12: 
+</span><span class="">   13: # Stored in the cache to distinguish &quot;the object returned undef&quot; from
+</span><span class="">   14: # &quot;this key has never been cached&quot;.  Must never be a legitimate return value.
+</span><span class="">   15: use constant UNDEF_SENTINEL =&gt; __PACKAGE__ . &#39;&gt;UNDEF&lt;&#39;;
+</span><span class="">   16: 
+</span><span class="">   17: =head1 NAME
+</span><span class="">   18: 
+</span><span class="">   19: Class::Simple::Cached - cache getter results for any get/set object
+</span><span class="">   20: 
+</span><span class="">   21: =head1 VERSION
+</span><span class="">   22: 
+</span><span class="">   23: Version 0.06
+</span><span class="">   24: 
+</span><span class="">   25: =cut
+</span><span class="">   26: 
+</span><span class="">   27: our $VERSION = &#39;0.06&#39;;
+</span><span class="">   28: 
+</span><span class="">   29: =encoding UTF-8
+</span><span class="">   30: 
+</span><span class="">   31: =head1 SYNOPSIS
+</span><span class="">   32: 
+</span><span class="">   33:     use CHI;
+</span><span class="">   34:     use Class::Simple::Cached;
+</span><span class="">   35: 
+</span><span class="">   36:     # Wrap an existing object with a cache layer
+</span><span class="">   37:     my $cache = CHI-&gt;new(driver =&gt; &#39;RawMemory&#39;, global =&gt; 1);
+</span><span class="">   38:     my $obj   = Class::Simple::Cached-&gt;new(
+</span><span class="">   39:         cache  =&gt; $cache,
+</span><span class="">   40:         object =&gt; My::Expensive::Object-&gt;new(),
+</span><span class="">   41:     );
+</span><span class="">   42: 
+</span><span class="">   43:     $obj-&gt;name(&#39;Alice&#39;);      # setter: delegates to wrapped object, updates cache
+</span><span class="">   44:     my $n = $obj-&gt;name();     # getter: returns cached &#39;Alice&#39; without hitting object
+</span><span class="">   45: 
+</span><span class="">   46:     # Or use a plain hash ref as the cache backend
+</span><span class="">   47:     my %store;
+</span><span class="">   48:     my $simple = Class::Simple::Cached-&gt;new(cache =&gt; \%store);
+</span><span class="">   49:     $simple-&gt;colour(&#39;blue&#39;);
+</span><span class="">   50:     print $simple-&gt;colour();  # &#39;blue&#39;, served from %store
+</span><span class="">   51: 
+</span><span class="">   52: =head1 DESCRIPTION
+</span><span class="">   53: 
+</span><span class="">   54: A subclass of L&lt;Class::Simple&gt; that transparently caches the return values of
+</span><span class="">   55: getter calls, so that repeated reads of expensive-to-compute or
+</span><span class="">   56: expensive-to-transport values hit the cache instead of the wrapped object.
+</span><span class="">   57: 
+</span><span class="">   58: Cache coherency is I&lt;not&gt; automatic.  If the wrapped object&#39;s state changes
+</span><span class="">   59: through a path other than the cached wrapper, callers must invalidate the cache
+</span><span class="">   60: themselves.
+</span><span class="">   61: 
+</span><span class="">   62: =head1 SUBROUTINES/METHODS
+</span><span class="">   63: 
+</span><span class="">   64: =head2 new
+</span><span class="">   65: 
+</span><span class="">   66: Constructs a C&lt;Class::Simple::Cached&gt; instance that wraps C&lt;object&gt; behind
+</span><span class="">   67: C&lt;cache&gt;.
+</span><span class="">   68: 
+</span><span class="">   69: =head3 ARGUMENTS
+</span><span class="">   70: 
+</span><span class="">   71: =over 4
+</span><span class="">   72: 
+</span><span class="">   73: =item C&lt;cache&gt; (mandatory)
+</span><span class="">   74: 
+</span><span class="">   75: Either a blessed object implementing C&lt;get($key)&gt;, C&lt;set($key, $val, $expires)&gt;,
+</span><span class="">   76: and C&lt;purge()&gt; (e.g. any L&lt;CHI&gt; driver); or a plain hash reference used as an
+</span><span class="">   77: in-process store.
+</span><span class="">   78: 
+</span><span class="">   79: =item C&lt;object&gt; (optional)
+</span><span class="">   80: 
+</span><span class="">   81: The object whose methods will be proxied and cached.  Defaults to a fresh
+</span><span class="">   82: C&lt;Class::Simple&gt; instance.
+</span><span class="">   83: 
+</span><span class="">   84: =back
+</span><span class="">   85: 
+</span><span class="">   86: Calling C&lt;&lt; -&gt;new() &gt;&gt; on an already-blessed instance returns a shallow clone
+</span><span class="">   87: (all stored fields are merged, including the existing cache handle).
+</span><span class="">   88: 
+</span><span class="">   89: =head3 RETURNS
+</span><span class="">   90: 
+</span><span class="">   91: A blessed C&lt;Class::Simple::Cached&gt; instance.
+</span><span class="">   92: 
+</span><span class="">   93: =head3 SIDE EFFECTS
+</span><span class="">   94: 
+</span><span class="">   95: None beyond allocating the new instance.
+</span><span class="">   96: 
+</span><span class="">   97: =head3 EXAMPLE
+</span><span class="">   98: 
+</span><span class="">   99:     # CHI-backed cache
+</span><span class="">  100:     use CHI;
+</span><span class="">  101:     my $obj = Class::Simple::Cached-&gt;new(
+</span><span class="">  102:         cache  =&gt; CHI-&gt;new(driver =&gt; &#39;RawMemory&#39;, global =&gt; 1),
+</span><span class="">  103:         object =&gt; My::Model-&gt;new(),
+</span><span class="">  104:     );
+</span><span class="">  105: 
+</span><span class="">  106:     # Hash-ref cache (useful for tests or short-lived objects)
+</span><span class="">  107:     my $obj = Class::Simple::Cached-&gt;new(cache =&gt; {});
+</span><span class="">  108: 
+</span><span class="">  109:     # Clone an existing wrapped object
+</span><span class="">  110:     my $clone = $obj-&gt;new();
+</span><span class="">  111: 
+</span><span class="">  112: =head3 API SPECIFICATION
+</span><span class="">  113: 
+</span><span class="">  114:     Input:
+</span><span class="">  115:       cache  =&gt; HashRef | CHICompatibleObject  # required
+</span><span class="">  116:       object =&gt; Object                          # optional
+</span><span class="">  117: 
+</span><span class="">  118:     Output:
+</span><span class="">  119:       Class::Simple::Cached instance
+</span><span class="">  120: 
+</span><span class="">  121: =head3 MESSAGES
+</span><span class="">  122: 
+</span><span class="">  123:     Message                                              Meaning                              Resolution
+</span><span class="">  124:     ---------------------------------------------------  -----------------------------------  ----------------------------------------
+</span><span class="">  125:     &quot;use -&gt;new() not ::new() to instantiate&quot;             Called as Class::Simple::Cached::new  Use $obj-&gt;new() or ClassName-&gt;new()
+</span><span class="">  126:     &quot;Usage: $class-&gt;new(cache =&gt; \$cache)&quot;               No arguments supplied                 Pass at least cache =&gt; ...
+</span><span class="">  127:     &quot;Cache must be ref to HASH or object&quot;                cache is a plain scalar or wrong ref  Use a hashref or CHI-compatible object
+</span><span class="">  128:     &quot;Cache object must implement get, set, purge&quot;        Blessed cache lacks required methods  Use a fully CHI-compatible object
+</span><span class="">  129: 
+</span><span class="">  130: =head3 PSEUDOCODE
+</span><span class="">  131: 
+</span><span class="">  132:     new(class, args):
+</span><span class="">  133:       IF class undefined   &acirc;&#134;&#146; carp and return undef
+</span><span class="">  134:       IF class is blessed  &acirc;&#134;&#146; merge fields, return shallow clone
+</span><span class="">  135:       IF no args           &acirc;&#134;&#146; croak Usage message
+</span><span class="">  136:       PARSE args into hashref via Params::Get
+</span><span class="">  137:       IF params.object absent &acirc;&#134;&#146; params.object = Class::Simple-&gt;new()
+</span><span class="">  138:       IF params.cache is a blessed object:
+</span><span class="">  139:         VERIFY it can(&#39;get&#39;) AND can(&#39;set&#39;) AND can(&#39;purge&#39;)
+</span><span class="">  140:         IF not &acirc;&#134;&#146; croak capability message
+</span><span class="">  141:         RETURN bless params, class
+</span><span class="">  142:       IF params.cache is a HASH ref:
+</span><span class="">  143:         RETURN bless params, class
+</span><span class="">  144:       croak &quot;Cache must be ref to HASH or object&quot;
+</span><span class="">  145: 
+</span><span class="">  146: =cut
+</span><span class="">  147: 
+</span><span class="">  148: sub new
+</span><span class="">  149: {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">150 → 153 → 159</span></span>  150: 	my $class = shift;
+</span><span class="">  151: 
+</span><span class="">  152: 	# Guard: always call as a method, not a bare function
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  153: 	if(!defined($class)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  154: 		Carp::carp(__PACKAGE__, &#39; use -&gt;new() not ::new() to instantiate&#39;);
+</span><span class="">  155: 		return;
+</span><span class="">  156: 	}
+</span><span class="">  157: 
+</span><span class="">  158: 	# When called on a blessed instance, return a shallow clone
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">159 → 159 → 166</span></span>  159: 	if(Scalar::Util::blessed($class)) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  160: 		my $params = Params::Get::get_params(undef, \@_) || {};
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  161: 		return bless { %{$class}, %{$params} }, ref($class);
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  162: 	}
+</span><span class="">  163: 
+</span><span class="">  164: 	# Require at least one argument so Params::Get&#39;s confess is never reached;
+</span><span class="">  165: 	# we want croak (Test::Carp-compatible) not confess.
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">166 → 166 → 170</span></span>  166: 	if(scalar(@_) == 0) {
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  167: 		Carp::croak(&#39;Usage: &#39;, $class, &#39;-&gt;new(cache =&gt; $cache)&#39;);
+</span><span class="">  168: 	}
+</span><span class="">  169: 
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">170 → 175 → 186</span></span>  170: 	my $params = Params::Get::get_params(&#39;cache&#39;, @_) || {};
+</span><span class="">  171: 
+</span><span class="">  172: 	# Default the wrapped object to a bare Class::Simple instance
+</span><span class="">  173: 	$params-&gt;{&#39;object&#39;} ||= Class::Simple-&gt;new();
+</span><span class="">  174: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  175: 	if(Scalar::Util::blessed($params-&gt;{&#39;cache&#39;})) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  176: 		# Verify the cache object speaks the required interface
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  177: 		unless($params-&gt;{&#39;cache&#39;}-&gt;can(&#39;get&#39;)
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  178: 			&amp;&amp; $params-&gt;{&#39;cache&#39;}-&gt;can(&#39;set&#39;)
+</span><span class="">  179: 			&amp;&amp; $params-&gt;{&#39;cache&#39;}-&gt;can(&#39;purge&#39;))
+</span><span class="">  180: 		{
+</span><span class="">  181: 			Carp::croak(&quot;Cache object must implement &#39;get&#39;, &#39;set&#39;, and &#39;purge&#39; methods&quot;);
+</span><span class="">  182: 		}
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  183: 		return bless $params, $class;
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  184: 	}
+</span><span class="">  185: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">186 → 186 → 190</span></span>  186: 	if(ref($params-&gt;{&#39;cache&#39;}) eq &#39;HASH&#39;) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  187: 		return bless $params, $class;
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  188: 	}
+</span><span class="">  189: 
+</span><span class="">  190: 	Carp::croak(&quot;$class: Cache must be ref to HASH or object&quot;);
+</span><span class="">  191: }
+</span><span class="">  192: 
+</span><span class="">  193: =head2 can
+</span><span class="">  194: 
+</span><span class="">  195: Reports whether this wrapper (or its embedded object) can handle a method.
+</span><span class="">  196: 
+</span><span class="">  197: =head3 ARGUMENTS
+</span><span class="">  198: 
+</span><span class="">  199: =over 4
+</span><span class="">  200: 
+</span><span class="">  201: =item C&lt;$method&gt; &acirc;&#128;&#148; the method name to probe.
+</span><span class="">  202: 
+</span><span class="">  203: =back
+</span><span class="">  204: 
+</span><span class="">  205: =head3 RETURNS
+</span><span class="">  206: 
+</span><span class="">  207: True if the method is known; false otherwise.
+</span><span class="">  208: 
+</span><span class="">  209: =head3 EXAMPLE
+</span><span class="">  210: 
+</span><span class="">  211:     $obj-&gt;can(&#39;name&#39;);   # true if the wrapped object has a name() method
+</span><span class="">  212: 
+</span><span class="">  213: =head3 API SPECIFICATION
+</span><span class="">  214: 
+</span><span class="">  215:     Input:  method_name : Str
+</span><span class="">  216:     Output: Bool
+</span><span class="">  217: 
+</span><span class="">  218: =head3 MESSAGES
+</span><span class="">  219: 
+</span><span class="">  220:     None.
+</span><span class="">  221: 
+</span><span class="">  222: =cut
+</span><span class="">  223: 
+</span><span class="">  224: sub can
+</span><span class="">  225: {
+</span><span class="">  226: 	my ($self, $method) = @_;
+</span><span class="">  227: 
+</span><span class="">  228: 	# When called as a class method there is no wrapped object to probe
+</span><span class="">  229: 	return $self-&gt;SUPER::can($method) unless Scalar::Util::blessed($self);
+</span><span class="">  230: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  231: 	return ($method eq &#39;new&#39;)
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  232: 		|| $self-&gt;{&#39;object&#39;}-&gt;can($method)
+</span><span class="">  233: 		|| $self-&gt;SUPER::can($method);
+</span><span class="">  234: }
+</span><span class="">  235: 
+</span><span class="">  236: =head2 isa
+</span><span class="">  237: 
+</span><span class="">  238: Reports whether this wrapper or its embedded object is of a given class.
+</span><span class="">  239: 
+</span><span class="">  240: =head3 ARGUMENTS
+</span><span class="">  241: 
+</span><span class="">  242: =over 4
+</span><span class="">  243: 
+</span><span class="">  244: =item C&lt;$class&gt; &acirc;&#128;&#148; the class name to test.
+</span><span class="">  245: 
+</span><span class="">  246: =back
+</span><span class="">  247: 
+</span><span class="">  248: =head3 RETURNS
+</span><span class="">  249: 
+</span><span class="">  250: True if the wrapper or the wrapped object is-a C&lt;$class&gt;.
+</span><span class="">  251: 
+</span><span class="">  252: =head3 EXAMPLE
+</span><span class="">  253: 
+</span><span class="">  254:     $obj-&gt;isa(&#39;My::Model&#39;);   # delegates to the wrapped object
+</span><span class="">  255: 
+</span><span class="">  256: =head3 API SPECIFICATION
+</span><span class="">  257: 
+</span><span class="">  258:     Input:  class_name : Str
+</span><span class="">  259:     Output: Bool
+</span><span class="">  260: 
+</span><span class="">  261: =head3 MESSAGES
+</span><span class="">  262: 
+</span><span class="">  263:     None.
+</span><span class="">  264: 
+</span><span class="">  265: =cut
+</span><span class="">  266: 
+</span><span class="">  267: sub isa
+</span><span class="">  268: {
+</span><span class="">  269: 	my ($self, $class) = @_;
+</span><span class="">  270: 
+</span><span class="">  271: 	# When called as a class method there is no wrapped object to interrogate
+</span><span class="survived-2 tooltip" data-tooltip="Return value mutation survived. Add tests asserting exact return values. Boolean logic mutation survived. Add tests covering both true and false paths.">  272: 	return $self-&gt;SUPER::isa($class) unless Scalar::Util::blessed($self);
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 2, Killed: 0, Survived: 2)</summary>
+					<ul>
+				<li><b>BOOL_NEGATE_272_2: Negate boolean return expression</b><br>MEDIUM: Add tests asserting both true and false outcomes
+
+								<div class="suggested-test">
+								<div class="suggest-label">🧪 Suggested Test</div>
+								<pre># Boolean branch test suggestion
+ok( !func(INPUT), &#39;Verify boolean branch behaviour&#39; );
+</pre>
+								</div>
+							</li><li><b>RETURN_UNDEF_272_2: Replace return expression with undef</b><br>LOW: Mutation survived, but impact may be minor
+
+								<div class="suggested-test">
+								<div class="suggest-label">🧪 Suggested Test</div>
+								<pre># Return value assertion
+is( func(INPUT), EXPECTED, &#39;Verify correct return value&#39; );
+</pre>
+								</div>
+							</li></ul></details>
+<span class="">  273: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  274: 	return 1 if $class eq ref($self)
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  275: 		|| $class eq __PACKAGE__
+</span><span class="">  276: 		|| $self-&gt;SUPER::isa($class);
+</span><span class="">  277: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  278: 	return $self-&gt;{&#39;object&#39;}-&gt;isa($class);
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  279: }
+</span><span class="">  280: 
+</span><span class="">  281: # DESTROY &acirc;&#128;&#148; purge this instance&#39;s entries from the cache on object teardown.
+</span><span class="">  282: #
+</span><span class="">  283: # Purpose:      Prevent stale entries from leaking into a shared cache after
+</span><span class="">  284: #               the wrapper goes out of scope.
+</span><span class="">  285: # Entry:        Called automatically by Perl&#39;s garbage collector.
+</span><span class="">  286: # Exit Status:  None (void).
+</span><span class="">  287: # Side Effects: Removes all cache keys prefixed with ref($self) for hash caches;
+</span><span class="">  288: #               calls purge() for CHI-style caches.
+</span><span class="">  289: #               See https://github.com/Perl/perl5/issues/14673 for why an
+</span><span class="">  290: #               explicit DESTROY is required even though AUTOLOAD could catch it.
+</span><span class="">  291: sub DESTROY
+</span><span class="">  292: {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">293 → 297 → 305</span></span>  293: 	my $self = shift;
+</span><span class="">  294: 
+</span><span class="">  295: 	my $cache = $self-&gt;{&#39;cache&#39;} or return;
+</span><span class="">  296: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  297: 	if(ref($cache) eq &#39;HASH&#39;) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  298: 		# Remove only this class&#39;s keys to avoid stomping on siblings sharing the hash
+</span><span class="">  299: 		my $class = ref($self);
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  300: 		delete $cache-&gt;{$_} for grep { index($_, &quot;$class:&quot;) == 0 } keys %{$cache};
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  301: 		return;
+</span><span class="">  302: 	}
+</span><span class="">  303: 
+</span><span class="">  304: 	# Skip purge during global destruction to avoid order-of-destruction crashes
+</span><span class="survived-1 tooltip" data-tooltip="Mutation survived. Add targeted tests to validate this branch."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">305 → 305 → 309</span></span>  305: 	if(defined($^V) &amp;&amp; ($^V ge &#39;v5.14.0&#39;)) {
+</span>
+					<details class="mutant-details">
+					<summary>Mutants (Total: 1, Killed: 0, Survived: 1)</summary>
+					<ul>
+				<li><b>COND_INV_305_2: Invert condition if to unless</b><br>MEDIUM: Add tests asserting both true and false outcomes
+</li></ul></details>
+<span class="">  306: 		return if ${^GLOBAL_PHASE} eq &#39;DESTRUCT&#39;;
+</span><span class="">  307: 	}
+</span><span class="">  308: 
+</span><span class="">  309: 	$cache-&gt;purge();
+</span><span class="">  310: }
+</span><span class="">  311: 
+</span><span class="">  312: # _cache_get / _cache_set &acirc;&#128;&#148; unified read/write; hides hash-ref vs. CHI dispatch
+</span><span class="">  313: # so the rest of the code never needs to branch on ref($cache).
+</span><span class="">  314: sub _cache_get :Protected
+</span><span class="">  315: {
+</span><span class="">  316: 	my ($self, $key) = @_;
+</span><span class="">  317: 	my $cache = $self-&gt;{&#39;cache&#39;};
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  318: 	return ref($cache) eq &#39;HASH&#39; ? $cache-&gt;{$key} : $cache-&gt;get($key);
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  319: }
+</span><span class="">  320: 
+</span><span class="">  321: sub _cache_set :Protected
+</span><span class="">  322: {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">323 → 325 → 0</span></span>  323: 	my ($self, $key, $val) = @_;
+</span><span class="">  324: 	my $cache = $self-&gt;{&#39;cache&#39;};
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  325: 	if(ref($cache) eq &#39;HASH&#39;) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  326: 		$cache-&gt;{$key} = $val;
+</span><span class="">  327: 	} else {
+</span><span class="">  328: 		$cache-&gt;set($key, $val, &#39;never&#39;);
+</span><span class="">  329: 	}
+</span><span class="">  330: }
+</span><span class="">  331: 
+</span><span class="">  332: =head2 AUTOLOAD (getter/setter proxy)
+</span><span class="">  333: 
+</span><span class="">  334: Intercepts every method call that is not explicitly defined, proxying it to
+</span><span class="">  335: the wrapped object with a caching layer for zero-argument (getter) calls.
+</span><span class="">  336: 
+</span><span class="">  337: Setter calls (one or more arguments) always pass through to the wrapped object
+</span><span class="">  338: and update the cache with the new value.
+</span><span class="">  339: 
+</span><span class="">  340: =head3 ARGUMENTS
+</span><span class="">  341: 
+</span><span class="">  342:     $method()        &acirc;&#128;&#148; getter: returns cached value if present, else calls object
+</span><span class="">  343:     $method($scalar) &acirc;&#128;&#148; scalar setter: stores scalar, updates cache
+</span><span class="">  344:     $method(@list)   &acirc;&#128;&#148; array setter: stores list, updates cache
+</span><span class="">  345: 
+</span><span class="">  346: =head3 RETURNS
+</span><span class="">  347: 
+</span><span class="">  348: The value returned by the wrapped object (or the cached copy thereof).
+</span><span class="">  349: 
+</span><span class="">  350: =head3 SIDE EFFECTS
+</span><span class="">  351: 
+</span><span class="">  352: =over 4
+</span><span class="">  353: 
+</span><span class="">  354: =item * Getter: may write to the cache on first call.
+</span><span class="">  355: 
+</span><span class="">  356: =item * Setter: writes to both the wrapped object and the cache.
+</span><span class="">  357: 
+</span><span class="">  358: =item * DESTROY: clears cache entries for this instance (see above).
+</span><span class="">  359: 
+</span><span class="">  360: =back
+</span><span class="">  361: 
+</span><span class="">  362: =head3 EXAMPLE
+</span><span class="">  363: 
+</span><span class="">  364:     $obj-&gt;colour(&#39;red&#39;);    # setter &acirc;&#128;&#148; writes &#39;red&#39; to object and cache
+</span><span class="">  365:     $obj-&gt;colour();         # getter &acirc;&#128;&#148; returns &#39;red&#39; from cache
+</span><span class="">  366: 
+</span><span class="">  367: =head3 API SPECIFICATION
+</span><span class="">  368: 
+</span><span class="">  369:     Input (getter):  method_name : Str,  args : ()
+</span><span class="">  370:     Input (setter):  method_name : Str,  args : (Scalar | List)
+</span><span class="">  371:     Output:          the stored/retrieved value or list
+</span><span class="">  372: 
+</span><span class="">  373: =head3 MESSAGES
+</span><span class="">  374: 
+</span><span class="">  375:     Message                           Meaning                             Resolution
+</span><span class="">  376:     --------------------------------  ----------------------------------  ----------------------------------------
+</span><span class="">  377:     &quot;$method&quot; (croak)                 Cached array&#39;s first element is     Do not store the sentinel string
+</span><span class="">  378:                                       the UNDEF_SENTINEL string           as a real value in the wrapped object
+</span><span class="">  379: 
+</span><span class="">  380: =head3 PSEUDOCODE
+</span><span class="">  381: 
+</span><span class="">  382:     AUTOLOAD(method, args...):
+</span><span class="">  383:       key = ref(self) + &quot;:&quot; + method
+</span><span class="">  384: 
+</span><span class="">  385:       IF no args (getter mode):
+</span><span class="">  386:         val = cache_get(key)
+</span><span class="">  387:         IF cache hit:
+</span><span class="">  388:           IF val is UNDEF_SENTINEL &acirc;&#134;&#146; return undef
+</span><span class="">  389:           IF val is an arrayref:
+</span><span class="">  390:             IF first element is UNDEF_SENTINEL &acirc;&#134;&#146; croak (data collision)
+</span><span class="">  391:             RETURN dereferenced list
+</span><span class="">  392:           RETURN scalar val
+</span><span class="">  393:         # Cache miss &acirc;&#128;&#148; ask the wrapped object
+</span><span class="">  394:         IF list context:
+</span><span class="">  395:           result_list = object-&gt;method()
+</span><span class="">  396:           IF empty      &acirc;&#134;&#146; return ()
+</span><span class="">  397:           cache_set(key, \result_list)
+</span><span class="">  398:           RETURN result_list
+</span><span class="">  399:         # Scalar context
+</span><span class="">  400:         result = object-&gt;method()
+</span><span class="">  401:         IF defined:
+</span><span class="">  402:           cache_set(key, result)
+</span><span class="">  403:           RETURN result
+</span><span class="">  404:         cache_set(key, UNDEF_SENTINEL)
+</span><span class="">  405:         RETURN undef
+</span><span class="">  406: 
+</span><span class="">  407:       ELSE (setter mode):
+</span><span class="">  408:         IF more than one arg (array setter):
+</span><span class="">  409:           val = object-&gt;method(\@args)     # wrapped object stores arrayref
+</span><span class="">  410:           IF defined:
+</span><span class="">  411:             cache_set(key, val)
+</span><span class="">  412:             RETURN @val
+</span><span class="">  413:           cache_set(key, UNDEF_SENTINEL)
+</span><span class="">  414:           RETURN undef
+</span><span class="">  415:         ELSE (scalar setter):
+</span><span class="">  416:           val = object-&gt;method(args[0])
+</span><span class="">  417:           cache_set(key, val // UNDEF_SENTINEL)
+</span><span class="">  418:           RETURN val
+</span><span class="">  419: 
+</span><span class="">  420: =cut
+</span><span class="">  421: 
+</span><span class="">  422: sub AUTOLOAD
+</span><span class="">  423: {
+</span><span class=""><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">424 → 432 → 465</span></span>  424: 	our $AUTOLOAD;
+</span><span class="">  425: 	my ($param) = $AUTOLOAD =~ /::(\w+)$/;
+</span><span class="">  426: 
+</span><span class="">  427: 	my $self   = shift;
+</span><span class="">  428: 	my $key    = ref($self) . &quot;:$param&quot;;
+</span><span class="">  429: 	my $object = $self-&gt;{&#39;object&#39;};
+</span><span class="">  430: 
+</span><span class="">  431: 	# Getter path &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  432: 	if(scalar(@_) == 0) {
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  433: 		my $rc = $self-&gt;_cache_get($key);
+</span><span class="">  434: 
+</span><span class="">  435: 		# Truthiness check: falsy-but-defined values (0, &#39;&#39;) are treated as cache
+</span><span class="">  436: 		# misses so the object is re-invoked every call.  This is a known
+</span><span class="">  437: 		# limitation; see the LIMITATIONS section in the POD.
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  438: 		if($rc) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  439: 			# Sentinel signals the object previously returned undef
+</span><span class="">  440: 			return if $rc eq UNDEF_SENTINEL;
+</span><span class="">  441: 
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  442: 			if(ref($rc) eq &#39;ARRAY&#39;) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  443: 				# Guard: array whose first element collides with our sentinel
+</span><span class="">  444: 				Carp::croak($param) if $rc-&gt;[0] eq UNDEF_SENTINEL;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  445: 				return @{$rc};
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  446: 			}
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  447: 			return $rc;
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  448: 		}
+</span><span class="">  449: 
+</span><span class="">  450: 		# Cache miss &acirc;&#128;&#148; call the real object
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  451: 		if(wantarray) {
+</span><p> <b> Mutants (Total: 1, Killed: 1, Survived: 0)</b><p><span class="">  452: 			my @result = $object-&gt;$param();
+</span><span class="">  453: 			return unless scalar(@result);	# empty list: don&#39;t cache, return ()
+</span><span class="">  454: 			$self-&gt;_cache_set($key, \@result);
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  455: 			return @result;
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  456: 		}
+</span><span class="">  457: 
+</span><span class="">  458: 		# Scalar / void context: cache the value (or the sentinel for undef)
+</span><span class="">  459: 		my $val = $object-&gt;$param();
+</span><span class="">  460: 		$self-&gt;_cache_set($key, defined($val) ? $val : UNDEF_SENTINEL);
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  461: 		return $val;
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  462: 	}
+</span><span class="">  463: 
+</span><span class="">  464: 	# Setter path &acirc;&#128;&#148; array &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic."><span class="lcsaj-tip"><span class="lcsaj-dot">●</span><span class="lcsaj-tip-text">465 → 465 → 475</span></span>  465: 	if(scalar(@_) &gt; 1) {
+</span><p> <b> Mutants (Total: 4, Killed: 4, Survived: 0)</b><p><span class="">  466: 		# Pass the list as an arrayref; the wrapped object stores it
+</span><span class="">  467: 		my $val = $object-&gt;$param(\@_);
+</span><span class="">  468: 		$self-&gt;_cache_set($key, defined($val) ? $val : UNDEF_SENTINEL);
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  469: 		return defined($val) ? @{$val} : ();
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  470: 	}
+</span><span class="">  471: 
+</span><span class="">  472: 	# Setter path &acirc;&#128;&#148; scalar &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="">  473: 	# CHI&#39;s set() returns the cache object, not the stored value;
+</span><span class="">  474: 	# capture the value before the set call and return it directly.
+</span><span class="">  475: 	my $val = $object-&gt;$param($_[0]);
+</span><span class="">  476: 	$self-&gt;_cache_set($key, defined($val) ? $val : UNDEF_SENTINEL);
+</span><span class="killed tooltip" data-tooltip="Mutations here were killed. Tests are effectively covering this logic.">  477: 	return $val;
+</span><p> <b> Mutants (Total: 2, Killed: 2, Survived: 0)</b><p><span class="">  478: }
+</span><span class="">  479: 
+</span><span class="">  480: =head1 LIMITATIONS
+</span><span class="">  481: 
+</span><span class="">  482: =over 4
+</span><span class="">  483: 
+</span><span class="">  484: =item Setter arguments are not part of the cache key.
+</span><span class="">  485: 
+</span><span class="">  486: Calls like C&lt;&lt; $obj-&gt;method($arg) &gt;&gt; use the key C&lt;ClassName:method&gt; regardless
+</span><span class="">  487: of C&lt;$arg&gt;.  Setters with different arguments therefore overwrite each other&#39;s
+</span><span class="">  488: cache entries.  For read-only caching of parameterised methods, see
+</span><span class="">  489: L&lt;Class::Simple::Readonly::Cached&gt;.
+</span><span class="">  490: 
+</span><span class="">  491: =item Falsy scalar return values are not cached.
+</span><span class="">  492: 
+</span><span class="">  493: Methods that return C&lt;0&gt; or C&lt;&#39;&#39;&gt; (false but defined) are treated as a cache
+</span><span class="">  494: miss on every call: the underlying object is re-invoked each time.  Only
+</span><span class="">  495: C&lt;undef&gt; is cached (via the UNDEF_SENTINEL).  If you need to cache C&lt;0&gt;, wrap
+</span><span class="">  496: it in a container object or use a different caching strategy.
+</span><span class="">  497: 
+</span><span class="">  498: =item Sentinel collision.
+</span><span class="">  499: 
+</span><span class="">  500: If the wrapped object ever returns the literal string
+</span><span class="">  501: C&lt;&lt; &quot;Class::Simple::Cached\&gt;UNDEF\&lt;&quot; &gt;&gt; as a scalar, or as the first element of a
+</span><span class="">  502: list, the module will misinterpret it as a cached-undef marker.  This string is
+</span><span class="">  503: deliberately unusual, but callers working with arbitrary string data should be
+</span><span class="">  504: aware of the constraint.
+</span><span class="">  505: 
+</span><span class="">  506: =item Shared cache and multiple classes.
+</span><span class="">  507: 
+</span><span class="">  508: When two C&lt;Class::Simple::Cached&gt; instances of B&lt;different&gt; classes share the
+</span><span class="">  509: same cache object, their keys are namespaced by class name and do not collide.
+</span><span class="">  510: However, C&lt;purge()&gt; on a CHI-style cache is global: destroying one instance will
+</span><span class="">  511: purge I&lt;all&gt; entries from a shared CHI cache, including those of the other
+</span><span class="">  512: instance.  Use per-instance cache objects, or a hash-ref cache, to avoid this.
+</span><span class="">  513: 
+</span><span class="">  514: =item Does not work with L&lt;Memoize&gt;.
+</span><span class="">  515: 
+</span><span class="">  516: =back
+</span><span class="">  517: 
+</span><span class="">  518: =head1 AUTHOR
+</span><span class="">  519: 
+</span><span class="">  520: Nigel Horne, C&lt;&lt; &lt;njh at nigelhorne.com&gt; &gt;&gt;
+</span><span class="">  521: 
+</span><span class="">  522: =head1 BUGS
+</span><span class="">  523: 
+</span><span class="">  524: Please report bugs and feature requests at
+</span><span class="">  525: L&lt;https://github.com/nigelhorne/Class-Simple-Cached/issues&gt;.
+</span><span class="">  526: 
+</span><span class="">  527: =head1 SEE ALSO
+</span><span class="">  528: 
+</span><span class="">  529: L&lt;Class::Simple&gt;, L&lt;CHI&gt;, L&lt;Class::Simple::Readonly::Cached&gt;
+</span><span class="">  530: 
+</span><span class="">  531: =over 4
+</span><span class="">  532: 
+</span><span class="">  533: =item * L&lt;Test Dashboard|https://nigelhorne.github.io/Class-Simple-Cached/coverage/&gt;
+</span><span class="">  534: 
+</span><span class="">  535: =back
+</span><span class="">  536: 
+</span><span class="">  537: =head1 SUPPORT
+</span><span class="">  538: 
+</span><span class="">  539: This module is provided as-is without any warranty.
+</span><span class="">  540: 
+</span><span class="">  541: You can find documentation for this module with the perldoc command:
+</span><span class="">  542: 
+</span><span class="">  543:     perldoc Class::Simple::Cached
+</span><span class="">  544: 
+</span><span class="">  545: =over 4
+</span><span class="">  546: 
+</span><span class="">  547: =item * MetaCPAN: L&lt;https://metacpan.org/release/Class-Simple-Cached&gt;
+</span><span class="">  548: 
+</span><span class="">  549: =item * Source: L&lt;https://github.com/nigelhorne/Class-Simple-Cached&gt;
+</span><span class="">  550: 
+</span><span class="">  551: =item * CPANTS: L&lt;http://cpants.cpanauthors.org/dist/Class-Simple-Cached&gt;
+</span><span class="">  552: 
+</span><span class="">  553: =item * Testers Matrix: L&lt;http://matrix.cpantesters.org/?dist=Class-Simple-Cached&gt;
+</span><span class="">  554: 
+</span><span class="">  555: =back
+</span><span class="">  556: 
+</span><span class="">  557: =head1 FORMAL SPECIFICATION
+</span><span class="">  558: 
+</span><span class="">  559: =head2 new
+</span><span class="">  560: 
+</span><span class="">  561:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="">  562:     [State]
+</span><span class="">  563:       cache  : &acirc;&#132;&#153;(HashRef &acirc;&#136;&ordf; CHIObject)
+</span><span class="">  564:       object : Object
+</span><span class="">  565: 
+</span><span class="">  566:     [CHIObject]
+</span><span class="">  567:       can_get   : Method
+</span><span class="">  568:       can_set   : Method
+</span><span class="">  569:       can_purge : Method
+</span><span class="">  570: 
+</span><span class="">  571:     new &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="">  572:     &Icirc;&#148;(cache, object)
+</span><span class="">  573:     cache? : HashRef &acirc;&#136;&ordf; CHIObject
+</span><span class="">  574:     object? : Object &acirc;&#136;&ordf; {&acirc;&#136;&#133;}
+</span><span class="">  575:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="">  576:     cache? &acirc;&#137;&nbsp; &acirc;&#136;&#133;
+</span><span class="">  577:     cache &acirc;&#128;&sup2; = cache?
+</span><span class="">  578:     object &acirc;&#128;&sup2; = (object? &acirc;&#137;&nbsp; &acirc;&#136;&#133; &acirc;&#159;&sup1; object?) &acirc;&#136;&uml; Class::Simple.new()
+</span><span class="">  579:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="">  580: 
+</span><span class="">  581: =head2 can
+</span><span class="">  582: 
+</span><span class="">  583:     can &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="">  584:     &Icirc;&#158;(cache, object)
+</span><span class="">  585:     method? : MethodName
+</span><span class="">  586:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="">  587:     result! = (method? = &#39;new&#39;)
+</span><span class="">  588:             &acirc;&#136;&uml; object.can(method?)
+</span><span class="">  589:             &acirc;&#136;&uml; SUPER::can(method?)
+</span><span class="">  590: 
+</span><span class="">  591: =head2 isa
+</span><span class="">  592: 
+</span><span class="">  593:     isa &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="">  594:     &Icirc;&#158;(cache, object)
+</span><span class="">  595:     class? : ClassName
+</span><span class="">  596:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="">  597:     result! = (class? = ref(self))
+</span><span class="">  598:             &acirc;&#136;&uml; (class? = __PACKAGE__)
+</span><span class="">  599:             &acirc;&#136;&uml; SUPER::isa(class?)
+</span><span class="">  600:             &acirc;&#136;&uml; object.isa(class?)
+</span><span class="">  601: 
+</span><span class="">  602: =head2 AUTOLOAD
+</span><span class="">  603: 
+</span><span class="">  604:     AUTOLOAD &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="">  605:     &Icirc;&#148;(cache)
+</span><span class="">  606:     method? : MethodName
+</span><span class="">  607:     args?   : Seq(Any)
+</span><span class="">  608:     &acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;&acirc;&#148;&#128;
+</span><span class="">  609:     key = ref(self) &acirc;&#138;&#149; &quot;:&quot; &acirc;&#138;&#149; method?
+</span><span class="">  610: 
+</span><span class="">  611:     Getter (args? = &acirc;&#136;&#133;):
+</span><span class="">  612:       (&acirc;&#136;&#131; v &acirc;&#128;&cent; cache_hit(key, v) &acirc;&#136;&sect; v &acirc;&#137;&nbsp; UNDEF_SENTINEL &acirc;&#159;&sup1; result! = v)
+</span><span class="">  613:       &acirc;&#136;&uml; (cache_hit(key, UNDEF_SENTINEL)              &acirc;&#159;&sup1; result! = undef)
+</span><span class="">  614:       &acirc;&#136;&uml; (&Acirc;&not;cache_hit(key, _)
+</span><span class="">  615:           &acirc;&#136;&sect; result! = object.method?()
+</span><span class="">  616:           &acirc;&#136;&sect; cache&acirc;&#128;&sup2; = cache &acirc;&#136;&ordf; {key &acirc;&#134;&brvbar; encode(result!)})
+</span><span class="">  617: 
+</span><span class="">  618:     Setter (args? &acirc;&#137;&nbsp; &acirc;&#136;&#133;):
+</span><span class="">  619:       object&acirc;&#128;&sup2;.method?(args?) = args?
+</span><span class="">  620:       cache&acirc;&#128;&sup2; = cache &acirc;&#136;&ordf; {key &acirc;&#134;&brvbar; encode(object&acirc;&#128;&sup2;.method?())}
+</span><span class="">  621:       result! = args?
+</span><span class="">  622: 
+</span><span class="">  623: =head1 LICENCE AND COPYRIGHT
+</span><span class="">  624: 
+</span><span class="">  625: Copyright (C) 2019-2026, Nigel Horne
+</span><span class="">  626: 
+</span><span class="">  627: Usage is subject to the GPL2 licence terms.
+</span><span class="">  628: If you use it,
+</span><span class="">  629: please let me know.
+</span><span class="">  630: 
+</span><span class="">  631: =cut
+</span><span class="">  632: 
+</span><span class="">  633: 1;
+</span></pre>
+
+<script>
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+}
+
+(function() {
+    const saved = localStorage.getItem('theme');
+    if(saved) {
+        document.documentElement.setAttribute('data-theme', saved);
+    }
+})();
+
+document.addEventListener("mousemove", function(e) {
+	document.querySelectorAll(".lcsaj-tip-text").forEach(function(tip) {
+		tip.style.left = (e.clientX + 12) + "px";
+		tip.style.top  = (e.clientY + 12) + "px";
+	});
+});
+</script>
+</body>
+</html>
+	
