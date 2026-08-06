@@ -52,6 +52,22 @@ Revision history for Class::Simple::Cached
 	- Remove unused CHI import from t/carp.t
 	- t/manifest.t: replace capturing groups with non-capturing (?:...) in filter regex;
 	  replace $ anchor with \z; modernise to Test::DescribeMe + Test::Needs
+	[ Logic / Deductive Reductions ]
+	- AUTOLOAD cache-hit dispatch: replace second `if(ref($rc) eq 'ARRAY')` with
+	  `elsif` — after the `if(!ref($rc))` block always returns, ref($rc) is
+	  guaranteed truthy; the elsif encodes this mutual exclusivity explicitly
+	- new(): replace redundant `ref($params->{'cache'}) eq 'HASH'` in the final
+	  branch with `$params->{'_is_hash_cache'}` (transitive reduction: value was
+	  already computed and stored two statements earlier)
+	[ Tests ]
+	- t/logic.t: new formal equivalence-partition proof suite — 12 subtests
+	  proving getter dispatch (G1 plain scalar, G3 arrayref, G4 blessed object),
+	  setter arg-count partitions (S1 scalar, A1 array), CHI AND-conjunction
+	  (missing get, set, or purge each independently croaks), falsy-scalar
+	  boundary (0 is not cached per documented limitation), and the context
+	  asymmetry between empty list context (never cached) vs scalar undef (cached)
+	- t/hash.t, t/chi.t: replace FIXME comments with formal explanation of the
+	  context asymmetry (list-context empty vs scalar-context undef caching)
 	[ Dependencies ]
 	- Add Test::Returns and Readonly to TEST_REQUIRES in Makefile.PL and cpanfile (used by t/cgi_security.t)
 	[ Documentation ]

@@ -21,6 +21,7 @@ t/eol.t
 t/hash.t
 t/kwalitee.t
 t/links.t
+t/logic.t
 t/manifest.t
 t/metrics.t
 t/no404s.t

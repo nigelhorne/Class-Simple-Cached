@@ -24,11 +24,11 @@ Class::Simple::Cached - cache getter results for any get/set object
 
 =head1 VERSION
 
-Version 0.06
+Version 0.07
 
 =cut
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 =encoding UTF-8
 
@@ -198,7 +198,9 @@ sub new
 		return bless $params, $class;
 	}
 
-	if(ref($params->{'cache'}) eq 'HASH') {
+	# Transitive reduction: _is_hash_cache already holds ref($cache) eq 'HASH'
+	# computed two statements earlier — no need to call ref() again.
+	if($params->{'_is_hash_cache'}) {
 		return bless $params, $class;
 	}
 
@@ -454,21 +456,23 @@ sub AUTOLOAD
 		# misses so the object is re-invoked every call.  This is a known
 		# limitation; see the LIMITATIONS section in the POD.
 		if($rc) {
-			# Only plain strings can equal the sentinel; a blessed object with
-			# an overloaded eq operator must not trigger a false undef return.
+			# Premise 1: $rc is truthy (the if-guard guarantees this).
+			# Premise 2: ref($rc) returns '' for plain scalars, 'ARRAY' for
+			#   arrayrefs, or a package name for blessed objects.
+			# The three branches below are mutually exclusive and exhaustive.
 			if(!ref($rc)) {
+				# Conclusion: plain scalar — only type that can equal the sentinel.
 				return if $rc eq UNDEF_SENTINEL;
 				return $rc;
-			}
-
-			if(ref($rc) eq 'ARRAY') {
-				# Same guard on the first element of a cached list.
+			} elsif(ref($rc) eq 'ARRAY') {
+				# Premise: !ref($rc) was false, so ref($rc) is truthy; no need
+				# to re-test ref() — the elsif is the deductive next step.
 				Carp::croak($param)
 					if !ref($rc->[0]) && $rc->[0] eq UNDEF_SENTINEL;
 				return @{$rc};
 			}
-
-			# Blessed object returned from the wrapped object — return as-is
+			# Conclusion: ref($rc) is truthy and ≠ 'ARRAY' → blessed object.
+			# Overloaded eq was never invoked; return the object as-is.
 			return $rc;
 		}
 
