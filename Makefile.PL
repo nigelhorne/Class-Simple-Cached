@@ -13,7 +13,7 @@ if($^O eq 'darwin') {
 
 WriteMakefile(
 	NAME		=> 'Class::Simple::Cached',
-	AUTHOR		=> q{Nigel Horne <njh@bandsman.co.uk>},
+	AUTHOR		=> q{Nigel Horne <njh@nigelhorne.com>},
 	VERSION_FROM	=> 'lib/Class/Simple/Cached.pm',
 	ABSTRACT_FROM   => 'lib/Class/Simple/Cached.pm',
 	((defined($ExtUtils::MakeMaker::VERSION) &&
@@ -31,6 +31,7 @@ WriteMakefile(
 		'Class::Simple' => 0,
 		'English' => 0,
 		'File::Spec' => 0,
+		'IPC::System::Simple' => 0,
 		'Test::Carp' => 0,
 		'Test::DescribeMe' => 0,
 		'Test::Most' => 0,

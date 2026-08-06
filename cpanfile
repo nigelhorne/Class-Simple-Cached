@@ -12,6 +12,7 @@ on 'test' => sub {
 	requires 'Class::Simple';
 	requires 'English';
 	requires 'File::Spec';
+	requires 'IPC::System::Simple';
 	requires 'Test::Carp';
 	requires 'Test::DescribeMe';
 	requires 'Test::Most';
