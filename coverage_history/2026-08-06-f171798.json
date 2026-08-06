@@ -1,0 +1,437 @@
+{
+   "runs" : [
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031351.55117,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "-e",
+         "start" : 1786031342.87372,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031343.02554,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "-e",
+         "start" : 1786031343.02542,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031343.32035,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/00-load.t",
+         "start" : 1786031343.31909,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031343.66245,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/10-new.t",
+         "start" : 1786031343.65905,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031344.0228,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/30-basics.t",
+         "start" : 1786031344.01851,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031344.37447,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/carp.t",
+         "start" : 1786031344.37263,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031344.80327,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/chi.t",
+         "start" : 1786031344.74865,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031345.13523,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/comment-spelling.t",
+         "start" : 1786031345.13456,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031345.3994,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/coverage.t",
+         "start" : 1786031345.39858,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031345.63879,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/critic.t",
+         "start" : 1786031345.63854,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031345.87033,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/dist.t",
+         "start" : 1786031345.87009,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031346.1017,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/eof.t",
+         "start" : 1786031346.10143,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031346.33175,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/eol.t",
+         "start" : 1786031346.33151,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031346.62903,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/hash.t",
+         "start" : 1786031346.62444,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031346.91391,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/kwalitee.t",
+         "start" : 1786031346.91365,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031347.14399,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/links.t",
+         "start" : 1786031347.14374,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031347.36344,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/manifest.t",
+         "start" : 1786031347.3632,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031347.59286,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/metrics.t",
+         "start" : 1786031347.59265,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031347.82129,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/no404s.t",
+         "start" : 1786031347.82107,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031348.07887,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/noopentickets.t",
+         "start" : 1786031348.07725,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031348.32277,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/noplan.t",
+         "start" : 1786031348.32249,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031348.57981,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/pod-cm.t",
+         "start" : 1786031348.57891,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031348.82948,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/pod-spelling.t",
+         "start" : 1786031348.82873,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031349.0676,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/pod-synopsis.t",
+         "start" : 1786031349.06732,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031349.29888,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/pod.t",
+         "start" : 1786031349.29862,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031349.55431,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/port.t",
+         "start" : 1786031349.55407,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031349.81366,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/prereq.t",
+         "start" : 1786031349.81297,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031350.06242,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/snippets.t",
+         "start" : 1786031350.06165,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031350.33334,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/strict.t",
+         "start" : 1786031350.33264,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031350.71984,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/test.t",
+         "start" : 1786031350.67068,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031351.02125,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/unused.t",
+         "start" : 1786031351.021,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031351.27515,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/used.t",
+         "start" : 1786031351.27446,
+         "version" : "0.06"
+      },
+      {
+         "OS" : "linux",
+         "abstract" : "cache getter results for any get/set object",
+         "dir" : "/home/runner/work/Class-Simple-Cached/Class-Simple-Cached",
+         "finish" : 1786031351.51354,
+         "name" : "Class-Simple-Cached",
+         "perl" : "5.40.4",
+         "run" : "t/vars.t",
+         "start" : 1786031351.5133,
+         "version" : "0.06"
+      }
+   ],
+   "summary" : {
+      "Total" : {
+         "branch" : {
+            "covered" : 44,
+            "error" : 8,
+            "percentage" : 84.6153846153846,
+            "total" : 52,
+            "uncoverable" : 0
+         },
+         "condition" : {
+            "covered" : 15,
+            "error" : 13,
+            "percentage" : 53.5714285714286,
+            "total" : 28,
+            "uncoverable" : 0
+         },
+         "statement" : {
+            "covered" : 107,
+            "error" : 3,
+            "percentage" : 97.2727272727273,
+            "total" : 110
+         },
+         "subroutine" : {
+            "covered" : 17,
+            "percentage" : 100,
+            "total" : 17
+         },
+         "total" : {
+            "covered" : 183,
+            "error" : 24,
+            "percentage" : 88.4057971014493,
+            "total" : 207,
+            "uncoverable" : 0
+         }
+      },
+      "blib/lib/Class/Simple/Cached.pm" : {
+         "branch" : {
+            "covered" : 44,
+            "error" : 8,
+            "percentage" : 84.6153846153846,
+            "total" : 52,
+            "uncoverable" : 0
+         },
+         "condition" : {
+            "covered" : 15,
+            "error" : 13,
+            "percentage" : 53.5714285714286,
+            "total" : 28,
+            "uncoverable" : 0
+         },
+         "statement" : {
+            "covered" : 107,
+            "error" : 3,
+            "percentage" : 97.2727272727273,
+            "total" : 110
+         },
+         "subroutine" : {
+            "covered" : 17,
+            "percentage" : 100,
+            "total" : 17
+         },
+         "total" : {
+            "covered" : 183,
+            "error" : 24,
+            "percentage" : 88.4057971014493,
+            "total" : 207,
+            "uncoverable" : 0
+         }
+      }
+   }
+}
