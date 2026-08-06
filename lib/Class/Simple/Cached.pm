@@ -397,11 +397,13 @@ The value returned by the wrapped object (or the cached copy thereof).
       IF no args (getter mode):
         val = cache_get(key)
         IF cache hit:
-          IF val is UNDEF_SENTINEL → return undef
+          IF val is a plain string (not a ref):
+            IF val is UNDEF_SENTINEL → return undef
+            RETURN val
           IF val is an arrayref:
-            IF first element is UNDEF_SENTINEL → croak (data collision)
+            IF first element is a plain string AND equals UNDEF_SENTINEL → croak
             RETURN dereferenced list
-          RETURN scalar val
+          RETURN val (blessed object)
         # Cache miss — ask the wrapped object
         IF list context:
           result_list = object->method()
@@ -451,14 +453,21 @@ sub AUTOLOAD
 		# misses so the object is re-invoked every call.  This is a known
 		# limitation; see the LIMITATIONS section in the POD.
 		if($rc) {
-			# Sentinel signals the object previously returned undef
-			return if $rc eq UNDEF_SENTINEL;
+			# Only plain strings can equal the sentinel; a blessed object with
+			# an overloaded eq operator must not trigger a false undef return.
+			if(!ref($rc)) {
+				return if $rc eq UNDEF_SENTINEL;
+				return $rc;
+			}
 
 			if(ref($rc) eq 'ARRAY') {
-				# Guard: array whose first element collides with our sentinel
-				Carp::croak($param) if $rc->[0] eq UNDEF_SENTINEL;
+				# Same guard on the first element of a cached list.
+				Carp::croak($param)
+					if !ref($rc->[0]) && $rc->[0] eq UNDEF_SENTINEL;
 				return @{$rc};
 			}
+
+			# Blessed object returned from the wrapped object — return as-is
 			return $rc;
 		}
 
@@ -527,6 +536,14 @@ purge I<all> entries from a shared CHI cache, including those of the other
 instance.  Use per-instance cache objects, or a hash-ref cache, to avoid this.
 
 =item Does not work with L<Memoize>.
+
+=item Overloaded C<eq> on cached values.
+
+If the wrapped object returns a blessed value that overloads the C<eq> operator,
+the sentinel comparison in the getter uses a C<ref()> pre-check so that only
+plain strings are compared against the sentinel.  Array elements are subject to
+the same pre-check.  Callers wrapping objects that return sentinel-like strings
+via overloading should be aware of this guard.
 
 =back
 

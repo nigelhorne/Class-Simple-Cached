@@ -220,11 +220,13 @@ The value returned by the wrapped object (or the cached copy thereof).
       IF no args (getter mode):
         val = cache_get(key)
         IF cache hit:
-          IF val is UNDEF_SENTINEL → return undef
+          IF val is a plain string (not a ref):
+            IF val is UNDEF_SENTINEL → return undef
+            RETURN val
           IF val is an arrayref:
-            IF first element is UNDEF_SENTINEL → croak (data collision)
+            IF first element is a plain string AND equals UNDEF_SENTINEL → croak
             RETURN dereferenced list
-          RETURN scalar val
+          RETURN val (blessed object)
         # Cache miss — ask the wrapped object
         IF list context:
           result_list = object->method()
@@ -285,6 +287,13 @@ The value returned by the wrapped object (or the cached copy thereof).
     instance.  Use per-instance cache objects, or a hash-ref cache, to avoid this.
 
 - Does not work with [Memoize](https://metacpan.org/pod/Memoize).
+- Overloaded `eq` on cached values.
+
+    If the wrapped object returns a blessed value that overloads the `eq` operator,
+    the sentinel comparison in the getter uses a `ref()` pre-check so that only
+    plain strings are compared against the sentinel.  Array elements are subject to
+    the same pre-check.  Callers wrapping objects that return sentinel-like strings
+    via overloading should be aware of this guard.
 
 # AUTHOR
 

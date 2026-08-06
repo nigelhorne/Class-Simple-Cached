@@ -1,6 +1,15 @@
 Revision history for Class::Simple::Cached
 
 0.07
+	[ Security ]
+	- AUTOLOAD getter: add !ref($rc) pre-check before UNDEF_SENTINEL eq comparison
+	  to prevent a wrapped object returning a blessed value with overloaded eq from
+	  triggering a false cached-undef result
+	- AUTOLOAD getter: apply same !ref() guard to array-element sentinel check
+	- t/coverage.t: replace eval "use Foo $version" (string eval with interpolated
+	  variable) with eval { require Foo; Foo->VERSION($min) } (block eval) to
+	  eliminate the code-injection surface that would appear if the constant were
+	  ever changed to a runtime value
 	[ Performance ]
 	- AUTOLOAD: replace regex /::(\w+)\z/ with substr+rindex to avoid regex engine
 	  startup on every method dispatch (~200 ns/call)
