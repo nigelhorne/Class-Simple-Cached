@@ -163,10 +163,11 @@ sub new
 	if(Scalar::Util::blessed($class)) {
 		my $params = Params::Get::get_params(undef, \@_) || {};
 		my %merged = (%{$class}, %{$params});
-		# If a new cache was supplied recalculate the precomputed type flag
-		if(exists $params->{'cache'}) {
-			$merged{'_is_hash_cache'} = ref($params->{'cache'}) eq 'HASH';
-		}
+		# Always recalculate internal dispatch fields after the merge so that
+		# caller-supplied _is_hash_cache or _cache_prefix args cannot corrupt
+		# the cache-type flag or the key-prefix (internal field injection).
+		$merged{'_is_hash_cache'} = ref($merged{'cache'}) eq 'HASH';
+		$merged{'_cache_prefix'}  = ref($class) . ':';
 		return bless \%merged, ref($class);
 	}
 

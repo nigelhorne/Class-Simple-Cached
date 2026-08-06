@@ -2,14 +2,24 @@ Revision history for Class::Simple::Cached
 
 0.07
 	[ Security ]
+	- clone path: always recalculate _is_hash_cache and _cache_prefix after the
+	  %merged hash is built, so caller-supplied internal-field args cannot override
+	  the dispatch type flag (internal field injection vulnerability, CVE-class:
+	  object property tampering via constructor argument pollution)
 	- AUTOLOAD getter: add !ref($rc) pre-check before UNDEF_SENTINEL eq comparison
 	  to prevent a wrapped object returning a blessed value with overloaded eq from
 	  triggering a false cached-undef result
 	- AUTOLOAD getter: apply same !ref() guard to array-element sentinel check
 	- t/coverage.t: replace eval "use Foo $version" (string eval with interpolated
 	  variable) with eval { require Foo; Foo->VERSION($min) } (block eval) to
-	  eliminate the code-injection surface that would appear if the constant were
-	  ever changed to a runtime value
+	  eliminate the code-injection surface if the constant is ever changed to a
+	  runtime value
+	[ Tests ]
+	- t/cgi_security.t: new adversarial penetration test suite — 9 subtests
+	  covering constructor validation, clone-path field injection, overloaded-eq
+	  sentinel bypass, array sentinel croak, resource-exhaustion (1 kB method name),
+	  key namespace isolation, undef sentinel storage, and return-type schema checks
+	  via Test::Returns
 	[ Performance ]
 	- AUTOLOAD: replace regex /::(\w+)\z/ with substr+rindex to avoid regex engine
 	  startup on every method dispatch (~200 ns/call)
