@@ -14,12 +14,14 @@ on 'test' => sub {
 	requires 'English';
 	requires 'File::Spec';
 	requires 'IPC::System::Simple';
+	requires 'Readonly';
 	requires 'Test::Carp';
 	requires 'Test::DescribeMe';
 	requires 'Test::Most';
 	requires 'Test::Needs';
 	requires 'Test::NoWarnings';
 	requires 'Test::Requires';
+	requires 'Test::Returns';
 };
 
 on 'develop' => sub {

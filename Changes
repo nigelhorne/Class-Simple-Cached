@@ -52,6 +52,8 @@ Revision history for Class::Simple::Cached
 	- Remove unused CHI import from t/carp.t
 	- t/manifest.t: replace capturing groups with non-capturing (?:...) in filter regex;
 	  replace $ anchor with \z; modernise to Test::DescribeMe + Test::Needs
+	[ Dependencies ]
+	- Add Test::Returns and Readonly to TEST_REQUIRES in Makefile.PL and cpanfile (used by t/cgi_security.t)
 	[ Documentation ]
 	- Full POD rewrite: add EXAMPLE, API SPECIFICATION, MESSAGES, FORMAL SPECIFICATION, PSEUDOCODE per method
 	- Add LIMITATIONS section covering falsy-value caching, sentinel collision, shared-cache purge, and Memoize

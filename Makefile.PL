@@ -39,6 +39,8 @@ WriteMakefile(
 		'Test::Needs' => 0,
 		'Test::NoWarnings' => 0,
 		'Test::Requires' => 0,
+		'Test::Returns' => 0,
+		'Readonly' => 0,
 	}, dist => $dist,
 	clean		=> { FILES => 'Class-Simple-Cached-*' },
 	# META_ADD => {
