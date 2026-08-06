@@ -30,26 +30,26 @@ https://pjcj.net
 <tr><td class="h"><a id="L176">176</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (scalar @_ == 0)</td></tr>
 <tr><td class="h"><a id="L190">190</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (&amp;Scalar::Util::blessed($params-&gt;{&#39;cache&#39;}))</td></tr>
 <tr><td class="h"><a id="L192">192</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless ($params-&gt;{&#39;cache&#39;}-&gt;can(&quot;get&quot;) and $params-&gt;{&#39;cache&#39;}-&gt;can(&quot;set&quot;) and $params-&gt;{&#39;cache&#39;}-&gt;can(&quot;purge&quot;))</td></tr>
-<tr><td class="h"><a id="L201">201</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (ref $params-&gt;{&#39;cache&#39;} eq &quot;HASH&quot;)</td></tr>
-<tr><td class="h"><a id="L244">244</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless &amp;Scalar::Util::blessed($self)</td></tr>
-<tr><td class="h"><a id="L287">287</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">unless &amp;Scalar::Util::blessed($self)</td></tr>
-<tr><td class="h"><a id="L289">289</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $class eq ref $self or $class eq __PACKAGE__ or $self-&gt;SUPER::isa($class)</td></tr>
-<tr><td class="h"><a id="L310">310</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">unless my $cache = $self-&gt;{&#39;cache&#39;}</td></tr>
-<tr><td class="h"><a id="L312">312</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($self-&gt;{&#39;_is_hash_cache&#39;})</td></tr>
-<tr><td class="h"><a id="L320">320</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">if ${^GLOBAL_PHASE} eq &quot;DESTRUCT&quot;</td></tr>
-<tr><td class="h"><a id="L450">450</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (scalar @_ == 0)</td></tr>
-<tr><td class="h"><a id="L456">456</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($rc)</td></tr>
-<tr><td class="h"><a id="L459">459</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless (ref $rc)</td></tr>
-<tr><td class="h"><a id="L460">460</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $rc eq &quot;Class::Simple::Cached&gt;UNDEF&lt;&quot;</td></tr>
-<tr><td class="h"><a id="L464">464</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (ref $rc eq &quot;ARRAY&quot;)</td></tr>
-<tr><td class="h"><a id="L466">466</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if not ref $rc-&gt;[0] and $rc-&gt;[0] eq &quot;Class::Simple::Cached&gt;UNDEF&lt;&quot;</td></tr>
-<tr><td class="h"><a id="L476">476</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (wantarray)</td></tr>
-<tr><td class="h"><a id="L478">478</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless scalar @result</td></tr>
-<tr><td class="h"><a id="L485">485</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">defined $val ? :</td></tr>
-<tr><td class="h"><a id="L490">490</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (scalar @_ &gt; 1)</td></tr>
-<tr><td class="h"><a id="L493">493</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">defined $val ? :</td></tr>
-<tr><td class="h"><a id="L494">494</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">defined $val ? :</td></tr>
-<tr><td class="h"><a id="L501">501</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">defined $val ? :</td></tr>
+<tr><td class="h"><a id="L203">203</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($params-&gt;{&#39;_is_hash_cache&#39;})</td></tr>
+<tr><td class="h"><a id="L246">246</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless &amp;Scalar::Util::blessed($self)</td></tr>
+<tr><td class="h"><a id="L289">289</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">unless &amp;Scalar::Util::blessed($self)</td></tr>
+<tr><td class="h"><a id="L291">291</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $class eq ref $self or $class eq __PACKAGE__ or $self-&gt;SUPER::isa($class)</td></tr>
+<tr><td class="h"><a id="L312">312</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">unless my $cache = $self-&gt;{&#39;cache&#39;}</td></tr>
+<tr><td class="h"><a id="L314">314</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($self-&gt;{&#39;_is_hash_cache&#39;})</td></tr>
+<tr><td class="h"><a id="L322">322</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">if ${^GLOBAL_PHASE} eq &quot;DESTRUCT&quot;</td></tr>
+<tr><td class="h"><a id="L452">452</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (scalar @_ == 0)</td></tr>
+<tr><td class="h"><a id="L458">458</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($rc)</td></tr>
+<tr><td class="h"><a id="L463">463</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (not ref $rc) { }</td></tr>
+<tr><td class="h"></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">elsif (ref $rc eq &#39;ARRAY&#39;) { }</td></tr>
+<tr><td class="h"><a id="L465">465</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $rc eq &quot;Class::Simple::Cached&gt;UNDEF&lt;&quot;</td></tr>
+<tr><td class="h"><a id="L470">470</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if not ref $rc-&gt;[0] and $rc-&gt;[0] eq &quot;Class::Simple::Cached&gt;UNDEF&lt;&quot;</td></tr>
+<tr><td class="h"><a id="L480">480</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (wantarray)</td></tr>
+<tr><td class="h"><a id="L482">482</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless scalar @result</td></tr>
+<tr><td class="h"><a id="L489">489</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">defined $val ? :</td></tr>
+<tr><td class="h"><a id="L494">494</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (scalar @_ &gt; 1)</td></tr>
+<tr><td class="h"><a id="L497">497</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">defined $val ? :</td></tr>
+<tr><td class="h"><a id="L498">498</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">defined $val ? :</td></tr>
+<tr><td class="h"><a id="L505">505</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">defined $val ? :</td></tr>
 </table>
 </body>
 </html>
