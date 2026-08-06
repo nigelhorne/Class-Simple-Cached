@@ -52,6 +52,16 @@ Revision history for Class::Simple::Cached
 	- Remove unused CHI import from t/carp.t
 	- t/manifest.t: replace capturing groups with non-capturing (?:...) in filter regex;
 	  replace $ anchor with \z; modernise to Test::DescribeMe + Test::Needs
+	[ Tests ]
+	- t/function.t: new white-box function test suite — 42 subtests covering
+	  every code path in new() (8 paths), can(), isa(), DESTROY() (4 paths),
+	  _cache_get() and _cache_set() (hash and CHI backends each), and AUTOLOAD
+	  (all 5 cache-hit branches + 4 cache-miss branches + scalar and array setter
+	  paths); uses Test::Mockingbird spies to observe Carp::carp and CHI method
+	  calls, Test::Memory::Cycle to verify no circular references, and
+	  Test::Returns for return-type schema checks
+	- Makefile.PL, cpanfile: add Test::Mockingbird and Test::Memory::Cycle to
+	  TEST_REQUIRES (used by t/function.t)
 	[ Logic / Deductive Reductions ]
 	- AUTOLOAD cache-hit dispatch: replace second `if(ref($rc) eq 'ARRAY')` with
 	  `elsif` — after the `if(!ref($rc))` block always returns, ref($rc) is

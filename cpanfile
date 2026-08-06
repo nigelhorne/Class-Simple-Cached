@@ -17,6 +17,8 @@ on 'test' => sub {
 	requires 'Readonly';
 	requires 'Test::Carp';
 	requires 'Test::DescribeMe';
+	requires 'Test::Memory::Cycle';
+	requires 'Test::Mockingbird';
 	requires 'Test::Most';
 	requires 'Test::Needs';
 	requires 'Test::NoWarnings';
