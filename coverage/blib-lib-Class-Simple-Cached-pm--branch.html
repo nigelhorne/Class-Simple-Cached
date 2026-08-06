@@ -20,7 +20,7 @@ https://pjcj.net
 <h1>Branch Coverage</h1>
 <table>
 <tr><td class="h" align="right">File:</td><td align="left">blib/lib/Class/Simple/Cached.pm</td></tr>
-<tr><td class="h" align="right">Coverage:</td><td align="left" class="c1">86.0%</td></tr>
+<tr><td class="h" align="right">Coverage:</td><td align="left" class="c1">84.6%</td></tr>
 </table>
 <div><br/></div>
 <table>
@@ -38,18 +38,19 @@ https://pjcj.net
 <tr><td class="h"><a id="L309">309</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">unless my $cache = $self-&gt;{&#39;cache&#39;}</td></tr>
 <tr><td class="h"><a id="L311">311</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($self-&gt;{&#39;_is_hash_cache&#39;})</td></tr>
 <tr><td class="h"><a id="L319">319</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">if ${^GLOBAL_PHASE} eq &quot;DESTRUCT&quot;</td></tr>
-<tr><td class="h"><a id="L447">447</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (scalar @_ == 0)</td></tr>
-<tr><td class="h"><a id="L453">453</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($rc)</td></tr>
-<tr><td class="h"><a id="L455">455</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $rc eq &quot;Class::Simple::Cached&gt;UNDEF&lt;&quot;</td></tr>
-<tr><td class="h"><a id="L457">457</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (ref $rc eq &quot;ARRAY&quot;)</td></tr>
-<tr><td class="h"><a id="L459">459</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">if $rc-&gt;[0] eq &quot;Class::Simple::Cached&gt;UNDEF&lt;&quot;</td></tr>
-<tr><td class="h"><a id="L466">466</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (wantarray)</td></tr>
-<tr><td class="h"><a id="L468">468</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless scalar @result</td></tr>
-<tr><td class="h"><a id="L475">475</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">defined $val ? :</td></tr>
-<tr><td class="h"><a id="L480">480</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (scalar @_ &gt; 1)</td></tr>
-<tr><td class="h"><a id="L483">483</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">defined $val ? :</td></tr>
+<tr><td class="h"><a id="L449">449</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (scalar @_ == 0)</td></tr>
+<tr><td class="h"><a id="L455">455</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if ($rc)</td></tr>
+<tr><td class="h"><a id="L458">458</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless (ref $rc)</td></tr>
+<tr><td class="h"><a id="L459">459</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if $rc eq &quot;Class::Simple::Cached&gt;UNDEF&lt;&quot;</td></tr>
+<tr><td class="h"><a id="L463">463</a></td><td class="c0">50</td><td class="c3">T</td><td class="c0">F</td><td class="s">if (ref $rc eq &quot;ARRAY&quot;)</td></tr>
+<tr><td class="h"><a id="L465">465</a></td><td class="c0">50</td><td class="c0">T</td><td class="c3">F</td><td class="s">if not ref $rc-&gt;[0] and $rc-&gt;[0] eq &quot;Class::Simple::Cached&gt;UNDEF&lt;&quot;</td></tr>
+<tr><td class="h"><a id="L475">475</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (wantarray)</td></tr>
+<tr><td class="h"><a id="L477">477</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">unless scalar @result</td></tr>
 <tr><td class="h"><a id="L484">484</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">defined $val ? :</td></tr>
-<tr><td class="h"><a id="L491">491</a></td><td class="c0">50</td><td class="c3">T</td><td class="c0">F</td><td class="s">defined $val ? :</td></tr>
+<tr><td class="h"><a id="L489">489</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">if (scalar @_ &gt; 1)</td></tr>
+<tr><td class="h"><a id="L492">492</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">defined $val ? :</td></tr>
+<tr><td class="h"><a id="L493">493</a></td><td class="c3">100</td><td class="c3">T</td><td class="c3">F</td><td class="s">defined $val ? :</td></tr>
+<tr><td class="h"><a id="L500">500</a></td><td class="c0">50</td><td class="c3">T</td><td class="c0">F</td><td class="s">defined $val ? :</td></tr>
 </table>
 </body>
 </html>
