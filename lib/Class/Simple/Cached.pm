@@ -311,14 +311,14 @@ sub DESTROY
 
 # _cache_get / _cache_set — unified read/write; hides hash-ref vs. CHI dispatch
 # so the rest of the code never needs to branch on ref($cache).
-sub :Protected _cache_get
+sub _cache_get :Protected
 {
 	my ($self, $key) = @_;
 	my $cache = $self->{'cache'};
 	return ref($cache) eq 'HASH' ? $cache->{$key} : $cache->get($key);
 }
 
-sub :Protected _cache_set
+sub _cache_set :Protected
 {
 	my ($self, $key, $val) = @_;
 	my $cache = $self->{'cache'};
