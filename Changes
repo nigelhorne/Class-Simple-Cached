@@ -78,6 +78,27 @@ Revision history for Class::Simple::Cached
 	  branch with `$params->{'_is_hash_cache'}` (transitive reduction: value was
 	  already computed and stored two statements earlier)
 	[ Tests ]
+	- t/integration.t: new end-to-end workflow test suite — 16 subtests covering
+	  hash-ref and CHI-backend complete lifecycles (new/setter/getter/DESTROY),
+	  multi-instance isolation (separate caches, no cross-pollution), shared
+	  hash-ref cache namespace isolation between different subclasses, shared
+	  hash-ref DESTROY impact when two same-class instances share a cache,
+	  CHI global-purge LIMITATION (DESTROY purges all entries from a shared
+	  CHI cache), clone workflow (shared cache reference, prefix reuse),
+	  subclass key isolation (different prefix per concrete class), can()/isa()
+	  delegation to inner object, optional-CHI simulation via
+	  Test::Without::Module (proves CHI is a caller-supplied runtime dependency,
+	  not a compile-time one), concurrent instances (five simultaneous objects
+	  with independent caches), undef sentinel round-trip, array setter/getter
+	  parity across both backends, and a backend-parity subtest that runs the
+	  same scalar setter/getter workflow against both hash-ref and CHI and
+	  asserts identical caller-visible outcomes
+	- Test::Mockingbird spies verify CHI set() receives the 'never' expiry token
+	  and purge() is called exactly once on DESTROY
+	[ Dependencies ]
+	- Add Test::Without::Module to TEST_REQUIRES in Makefile.PL and cpanfile
+	  (used by t/integration.t)
+	[ Tests ]
 	- t/logic.t: new formal equivalence-partition proof suite — 12 subtests
 	  proving getter dispatch (G1 plain scalar, G3 arrayref, G4 blessed object),
 	  setter arg-count partitions (S1 scalar, A1 array), CHI AND-conjunction

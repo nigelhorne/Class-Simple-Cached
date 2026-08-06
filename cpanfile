@@ -21,6 +21,7 @@ on 'test' => sub {
 	requires 'Test::Mockingbird';
 	requires 'Test::Most';
 	requires 'Test::Needs';
+	requires 'Test::Without::Module';
 	requires 'Test::NoWarnings';
 	requires 'Test::Requires';
 	requires 'Test::Returns';
