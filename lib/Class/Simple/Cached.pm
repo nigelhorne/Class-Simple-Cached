@@ -2,7 +2,6 @@ package Class::Simple::Cached;
 
 use strict;
 use warnings;
-use autodie qw(:all);
 
 use Carp ();
 use Class::Simple;
@@ -24,11 +23,11 @@ Class::Simple::Cached - cache getter results for any get/set object
 
 =head1 VERSION
 
-Version 0.06
+Version 0.07
 
 =cut
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 =encoding UTF-8
 
@@ -55,9 +54,9 @@ our $VERSION = '0.06';
 
 =head1 DESCRIPTION
 
-A subclass of L<Class::Simple> that transparently caches the return values of
-getter calls, so that repeated reads of expensive-to-compute or
-expensive-to-transport values hit the cache instead of the wrapped object.
+A transparent caching wrapper for any L<Class::Simple>-compatible get/set object.
+Repeated getter calls hit the cache instead of the wrapped object, avoiding
+expensive recomputation or remote round-trips.
 
 Cache coherency is I<not> automatic.  If the wrapped object's state changes
 through a path other than the cached wrapper, callers must invalidate the cache
@@ -528,6 +527,72 @@ sub AUTOLOAD
 	return $val;
 }
 
+=head1 FORMAL SPECIFICATION
+
+=head2 new
+
+    ─────────────────────────────────────────────────────────────────
+    [State]
+      cache  : ℙ(HashRef ∪ CHIObject)
+      object : Object
+
+    [CHIObject]
+      can_get   : Method
+      can_set   : Method
+      can_purge : Method
+
+    new ──────────────────────────────────────────────────────────────
+    Δ(cache, object)
+    cache? : HashRef ∪ CHIObject
+    object? : Object ∪ {∅}
+    ─────────────────────────────────────────────────
+    cache? ≠ ∅
+    cache ′ = cache?
+    object ′ = (object? ≠ ∅ ⟹ object?) ∨ Class::Simple.new()
+    ─────────────────────────────────────────────────
+
+=head2 can
+
+    can ──────────────────────────────────────────────────
+    Ξ(cache, object)
+    method? : MethodName
+    ─────────────────────────────────────────────────
+    result! = (method? = 'new')
+            ∨ object.can(method?)
+            ∨ SUPER::can(method?)
+
+=head2 isa
+
+    isa ──────────────────────────────────────────────────
+    Ξ(cache, object)
+    class? : ClassName
+    ─────────────────────────────────────────────────
+    result! = (class? = ref(self))
+            ∨ (class? = __PACKAGE__)
+            ∨ SUPER::isa(class?)
+            ∨ object.isa(class?)
+
+=head2 AUTOLOAD
+
+    AUTOLOAD ─────────────────────────────────────────────────────────
+    Δ(cache)
+    method? : MethodName
+    args?   : Seq(Any)
+    ─────────────────────────────────────────────────
+    key = ref(self) ⊕ ":" ⊕ method?
+
+    Getter (args? = ∅):
+      (∃ v • cache_hit(key, v) ∧ v ≠ UNDEF_SENTINEL ⟹ result! = v)
+      ∨ (cache_hit(key, UNDEF_SENTINEL)              ⟹ result! = undef)
+      ∨ (¬cache_hit(key, _)
+          ∧ result! = object.method?()
+          ∧ cache′ = cache ∪ {key ↦ encode(result!)})
+
+    Setter (args? ≠ ∅):
+      object′.method?(args?) = args?
+      cache′ = cache ∪ {key ↦ encode(object′.method?())}
+      result! = args?
+
 =head1 LIMITATIONS
 
 =over 4
@@ -612,72 +677,6 @@ You can find documentation for this module with the perldoc command:
 =item * Testers Matrix: L<http://matrix.cpantesters.org/?dist=Class-Simple-Cached>
 
 =back
-
-=head1 FORMAL SPECIFICATION
-
-=head2 new
-
-    ─────────────────────────────────────────────────────────────────
-    [State]
-      cache  : ℙ(HashRef ∪ CHIObject)
-      object : Object
-
-    [CHIObject]
-      can_get   : Method
-      can_set   : Method
-      can_purge : Method
-
-    new ──────────────────────────────────────────────────────────────
-    Δ(cache, object)
-    cache? : HashRef ∪ CHIObject
-    object? : Object ∪ {∅}
-    ─────────────────────────────────────────────────
-    cache? ≠ ∅
-    cache ′ = cache?
-    object ′ = (object? ≠ ∅ ⟹ object?) ∨ Class::Simple.new()
-    ─────────────────────────────────────────────────
-
-=head2 can
-
-    can ──────────────────────────────────────────────────
-    Ξ(cache, object)
-    method? : MethodName
-    ─────────────────────────────────────────────────
-    result! = (method? = 'new')
-            ∨ object.can(method?)
-            ∨ SUPER::can(method?)
-
-=head2 isa
-
-    isa ──────────────────────────────────────────────────
-    Ξ(cache, object)
-    class? : ClassName
-    ─────────────────────────────────────────────────
-    result! = (class? = ref(self))
-            ∨ (class? = __PACKAGE__)
-            ∨ SUPER::isa(class?)
-            ∨ object.isa(class?)
-
-=head2 AUTOLOAD
-
-    AUTOLOAD ─────────────────────────────────────────────────────────
-    Δ(cache)
-    method? : MethodName
-    args?   : Seq(Any)
-    ─────────────────────────────────────────────────
-    key = ref(self) ⊕ ":" ⊕ method?
-
-    Getter (args? = ∅):
-      (∃ v • cache_hit(key, v) ∧ v ≠ UNDEF_SENTINEL ⟹ result! = v)
-      ∨ (cache_hit(key, UNDEF_SENTINEL)              ⟹ result! = undef)
-      ∨ (¬cache_hit(key, _)
-          ∧ result! = object.method?()
-          ∧ cache′ = cache ∪ {key ↦ encode(result!)})
-
-    Setter (args? ≠ ∅):
-      object′.method?(args?) = args?
-      cache′ = cache ∪ {key ↦ encode(object′.method?())}
-      result! = args?
 
 =head1 LICENCE AND COPYRIGHT
 

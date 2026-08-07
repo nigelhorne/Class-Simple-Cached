@@ -166,7 +166,11 @@ subtest 'new(): carp + undef when called without a class (bare function form)' =
 	# POD RETURNS:  undef
 	# Strategy: spy on Carp::carp, call new() as a bare function, inspect
 	# the call log.  The spy wraps the original so other carp calls still work.
-	my $spy    = spy 'Carp::carp';
+	my $spy = spy 'Carp::carp';
+	# Redirect STDERR so the carp output does not bleed into prove's non-verbose
+	# output and alarm users reading a clean test run.
+	local *STDERR;
+	open(STDERR, '>', \my $stderr_buf) or die "Cannot redirect STDERR: $!";
 	my $result = Class::Simple::Cached::new();
 
 	my @calls  = $spy->();

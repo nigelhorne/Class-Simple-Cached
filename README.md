@@ -7,7 +7,7 @@ Class::Simple::Cached - cache getter results for any get/set object
 
 # VERSION
 
-Version 0.06
+Version 0.07
 
 # SYNOPSIS
 
@@ -32,9 +32,9 @@ Version 0.06
 
 # DESCRIPTION
 
-A subclass of [Class::Simple](https://metacpan.org/pod/Class%3A%3ASimple) that transparently caches the return values of
-getter calls, so that repeated reads of expensive-to-compute or
-expensive-to-transport values hit the cache instead of the wrapped object.
+A transparent caching wrapper for any [Class::Simple](https://metacpan.org/pod/Class%3A%3ASimple)-compatible get/set object.
+Repeated getter calls hit the cache instead of the wrapped object, avoiding
+expensive recomputation or remote round-trips.
 
 Cache coherency is _not_ automatic.  If the wrapped object's state changes
 through a path other than the cached wrapper, callers must invalidate the cache
