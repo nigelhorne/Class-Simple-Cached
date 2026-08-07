@@ -771,23 +771,27 @@ subtest 'global-state:dollar-bang' => sub {
 	done_testing();
 };
 
-subtest 'global-state:alarm-not-cancelled' => sub {
-	# If CSC called alarm() internally it would silently cancel the caller's
-	# countdown timer.  Verify by setting a long alarm, exercising CSC, then
-	# reading back the remaining time.
-	my $obj = Class::Simple::Cached->new(cache => {}, object => t::EC::Inner->new());
+SKIP: {
+	skip 'alarm() not available on this platform', 1
+		unless eval { alarm(0); 1 };
+	subtest 'global-state:alarm-not-cancelled' => sub {
+		# If CSC called alarm() internally it would silently cancel the caller's
+		# countdown timer.  Verify by setting a long alarm, exercising CSC, then
+		# reading back the remaining time.
+		my $obj = Class::Simple::Cached->new(cache => {}, object => t::EC::Inner->new());
 
-	my $prev = alarm(30);		# set a 30-second countdown
-	$obj->name('test');
-	$obj->name();
-	my $remaining = alarm(0);	# cancel and read
+		my $prev = alarm(30);		# set a 30-second countdown
+		$obj->name('test');
+		$obj->name();
+		my $remaining = alarm(0);	# cancel and read
 
-	ok($remaining > 0,
-		'global-state:alarm: CSC does not cancel the caller\'s alarm() timer');
+		ok($remaining > 0,
+			'global-state:alarm: CSC does not cancel the caller\'s alarm() timer');
 
-	alarm($prev);			# restore whatever was there before
-	done_testing();
-};
+		alarm($prev);			# restore whatever was there before
+		done_testing();
+	};
+}
 
 # ═══════════════════════════════════════════════════════════════════════════
 # SECTION H — can() and isa() hostile inputs

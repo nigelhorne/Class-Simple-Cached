@@ -719,24 +719,28 @@ subtest 'global state: DESTROY does not modify outer $_' => sub {
 	done_testing();
 };
 
-subtest 'global state: alarm() timer is not reset by CSC operations' => sub {
-	# CSC must not call alarm() internally.  Set a 60-second timer, run CSC
-	# operations, then cancel and assert time remained (> 0 seconds left).
-	alarm(60);
+SKIP: {
+	skip 'alarm() not available on this platform', 1
+		unless eval { alarm(0); 1 };
+	subtest 'global state: alarm() timer is not reset by CSC operations' => sub {
+		# CSC must not call alarm() internally.  Set a 60-second timer, run CSC
+		# operations, then cancel and assert time remained (> 0 seconds left).
+		alarm(60);
 
-	my $obj = Class::Simple::Cached->new(cache => {});
-	$obj->name('test');
-	$obj->name();
-	{
-		my $tmp = $obj->new();   # clone path
-	}   # DESTROY fires
+		my $obj = Class::Simple::Cached->new(cache => {});
+		$obj->name('test');
+		$obj->name();
+		{
+			my $tmp = $obj->new();   # clone path
+		}   # DESTROY fires
 
-	my $remaining = alarm(0);   # cancel and read remaining seconds
-	ok($remaining > 0,
-		'alarm() timer was not reset by any CSC operation');
+		my $remaining = alarm(0);   # cancel and read remaining seconds
+		ok($remaining > 0,
+			'alarm() timer was not reset by any CSC operation');
 
-	done_testing();
-};
+		done_testing();
+	};
+}
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Ledger exhaustion — proves 100% of documented API states were exercised
