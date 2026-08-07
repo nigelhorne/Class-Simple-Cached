@@ -24,11 +24,11 @@ Class::Simple::Cached - cache getter results for any get/set object
 
 =head1 VERSION
 
-Version 0.07
+Version 0.06
 
 =cut
 
-our $VERSION = '0.07';
+our $VERSION = '0.06';
 
 =encoding UTF-8
 
@@ -168,6 +168,22 @@ sub new
 		# the cache-type flag or the key-prefix (internal field injection).
 		$merged{'_is_hash_cache'} = ref($merged{'cache'}) eq 'HASH';
 		$merged{'_cache_prefix'}  = ref($class) . ':';
+
+		# Validate the (potentially-replaced) cache object using the same rules
+		# as new() — the clone path must not produce an unusable object.
+		if(!$merged{'_is_hash_cache'}) {
+			if(Scalar::Util::blessed($merged{'cache'})) {
+				unless($merged{'cache'}->can('get')
+					&& $merged{'cache'}->can('set')
+					&& $merged{'cache'}->can('purge'))
+				{
+					Carp::croak("Cache object must implement 'get', 'set', and 'purge' methods");
+				}
+			} else {
+				Carp::croak(ref($class) . ': Cache must be ref to HASH or object');
+			}
+		}
+
 		return bless \%merged, ref($class);
 	}
 
@@ -242,6 +258,9 @@ sub can
 {
 	my ($self, $method) = @_;
 
+	# Undefined method name is outside the documented API; return undef cleanly.
+	return unless defined $method;
+
 	# When called as a class method there is no wrapped object to probe
 	return $self->SUPER::can($method) unless Scalar::Util::blessed($self);
 
@@ -284,6 +303,9 @@ True if the wrapper or the wrapped object is-a C<$class>.
 sub isa
 {
 	my ($self, $class) = @_;
+
+	# Undefined class name is outside the documented API; return undef cleanly.
+	return unless defined $class;
 
 	# When called as a class method there is no wrapped object to interrogate
 	return $self->SUPER::isa($class) unless Scalar::Util::blessed($self);
