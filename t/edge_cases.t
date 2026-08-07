@@ -772,8 +772,8 @@ subtest 'global-state:dollar-bang' => sub {
 };
 
 SKIP: {
-	skip 'alarm() not available on this platform', 1
-		unless eval { alarm(0); 1 };
+	skip 'alarm() not functional on this platform', 1
+		unless eval { alarm(30); alarm(0) > 0 };
 	subtest 'global-state:alarm-not-cancelled' => sub {
 		# If CSC called alarm() internally it would silently cancel the caller's
 		# countdown timer.  Verify by setting a long alarm, exercising CSC, then

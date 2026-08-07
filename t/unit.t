@@ -720,8 +720,8 @@ subtest 'global state: DESTROY does not modify outer $_' => sub {
 };
 
 SKIP: {
-	skip 'alarm() not available on this platform', 1
-		unless eval { alarm(0); 1 };
+	skip 'alarm() not functional on this platform', 1
+		unless eval { alarm(30); alarm(0) > 0 };
 	subtest 'global state: alarm() timer is not reset by CSC operations' => sub {
 		# CSC must not call alarm() internally.  Set a 60-second timer, run CSC
 		# operations, then cancel and assert time remained (> 0 seconds left).
